@@ -1,11 +1,10 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from supabase import create_client, Client
+from supabase import create_client
 
 app = FastAPI()
 
-# Autoriser tous les domaines pour que le widget fonctionne partout
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,10 +16,8 @@ app.add_middleware(
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise ValueError("Les variables d'environnement Supabase sont manquantes.")
-
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Correction de l'initialisation du client Supabase
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @app.get("/")
 def home():
@@ -28,17 +25,19 @@ def home():
 
 @app.get("/api/v1/widget/{api_key}")
 def get_widget(api_key: str):
-    client_res = supabase.table("clients").select("id, plan").eq("api_key", api_key).execute()
-    if not client_res.data:
-        raise HTTPException(status_code=404, detail="Clé API invalide")
-    
-    client_id = client_res.data[0]["id"]
-    widget_res = supabase.table("widgets").select("*").eq("client_id", client_id).execute()
-    
-    config = widget_res.data[0] if widget_res.data else {"badge_text": "Garantie Satisfait ou Remboursé", "show_branding": True}
-    
-    # Force l'affichage de la marque si l'utilisateur est en plan gratuit
-    if client_res.data[0]["plan"] == "free":
-        config["show_branding"] = True
+    try:
+        client_res = supabase.table("clients").select("id, plan").eq("api_key", api_key).execute()
+        if not client_res.data:
+            raise HTTPException(status_code=404, detail="Clé API invalide")
         
-    return config
+        client_id = client_res.data[0]["id"]
+        widget_res = supabase.table("widgets").select("*").eq("client_id", client_id).execute()
+        
+        config = widget_res.data[0] if widget_res.data else {"badge_text": "Garantie Satisfait ou Remboursé", "show_branding": True}
+        
+        if client_res.data[0]["plan"] == "free":
+            config["show_branding"] = True
+            
+        return config
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
