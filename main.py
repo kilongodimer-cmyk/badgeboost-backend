@@ -13,11 +13,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-
-# Correction de l'initialisation du client Supabase
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+def get_supabase_client():
+    url = os.getenv("SUPABASE_URL")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    
+    if not url or not key:
+        raise HTTPException(
+            status_code=500, 
+            detail="Variables d'environnement SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY manquantes dans Render"
+        )
+    
+    # Nettoyage automatique au cas où /rest/v1/ a été inclus
+    url = url.rstrip("/").replace("/rest/v1", "")
+    
+    return create_client(url, key)
 
 @app.get("/")
 def home():
@@ -26,6 +35,8 @@ def home():
 @app.get("/api/v1/widget/{api_key}")
 def get_widget(api_key: str):
     try:
+        supabase = get_supabase_client()
+        
         client_res = supabase.table("clients").select("id, plan").eq("api_key", api_key).execute()
         if not client_res.data:
             raise HTTPException(status_code=404, detail="Clé API invalide")
@@ -39,5 +50,7 @@ def get_widget(api_key: str):
             config["show_branding"] = True
             
         return config
+    except HTTPException as http_ex:
+        raise http_ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
