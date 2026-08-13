@@ -14,17 +14,20 @@ app.add_middleware(
 )
 
 def get_supabase_client():
-    url = os.getenv("SUPABASE_URL")
-    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    url = os.getenv("SUPABASE_URL", "")
+    key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
     
     if not url or not key:
         raise HTTPException(
             status_code=500, 
-            detail="Variables d'environnement SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY manquantes dans Render"
+            detail="Variables d'environnement manquantes dans Render"
         )
     
-    # Nettoyage automatique au cas où /rest/v1/ a été inclus
-    url = url.rstrip("/").replace("/rest/v1", "")
+    # Nettoyage rigoureux de l'URL Supabase
+    url = url.strip().strip("'").strip('"')
+    if "/rest/v1" in url:
+        url = url.split("/rest/v1")[0]
+    url = url.rstrip("/")
     
     return create_client(url, key)
 
