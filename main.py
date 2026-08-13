@@ -1,6 +1,7 @@
 import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from supabase import create_client
 
 app = FastAPI()
@@ -23,7 +24,6 @@ def get_supabase_client():
             detail="Variables d'environnement manquantes dans Render"
         )
     
-    # Nettoyage rigoureux de l'URL Supabase
     url = url.strip().strip("'").strip('"')
     if "/rest/v1" in url:
         url = url.split("/rest/v1")[0]
@@ -34,6 +34,11 @@ def get_supabase_client():
 @app.get("/")
 def home():
     return {"status": "API BadgeBoost en ligne 🚀"}
+
+# Route pour distribuer le script JS
+@app.get("/widget.js")
+def get_widget_script():
+    return FileResponse("widget.js", media_type="application/javascript")
 
 @app.get("/api/v1/widget/{api_key}")
 def get_widget(api_key: str):
