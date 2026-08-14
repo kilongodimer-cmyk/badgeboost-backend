@@ -62,3 +62,36 @@ def get_widget(api_key: str):
         raise http_ex
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+import stripe
+
+# Clé secrète de test Stripe
+stripe.api_key = "sk_test_51RbOriRpZzMm1tv8xMARRr5tN3HYRJ2ISXcRXCZPhYlAmveTS2ZhUBxsewJv52psLSBV30kKq7nPLGHxiLpjsG89006sUYnyYY"
+
+@app.post("/api/v1/create-checkout-session")
+def create_checkout_session(client_id: str):
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[
+                {
+                    'price_data': {
+                        'currency': 'usd',
+                        'product_data': {
+                            'name': 'Abonnement BadgeBoost Pro',
+                            'description': 'Accès illimité aux badges de confiance pour votre boutique',
+                        },
+                        'unit_amount': 1500,  # 15.00$ USD / mois
+                        'recurring': {'interval': 'month'},
+                    },
+                    'quantity': 1,
+                },
+            ],
+            mode='subscription',
+            success_url='https://badgeboost-backend.onrender.com/docs',
+            cancel_url='https://badgeboost-backend.onrender.com/docs',
+            client_reference_id=client_id,
+        )
+        return {"url": checkout_session.url}
+    except Exception as e:
+        return {"error": str(e)}
