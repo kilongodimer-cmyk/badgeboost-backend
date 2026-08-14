@@ -95,3 +95,9 @@ def create_checkout_session(client_id: str):
         return {"url": checkout_session.url}
     except Exception as e:
         return {"error": str(e)}
+
+
+# Route pour servir la page Dashboard HTML
+@app.get("/dashboard")
+def get_dashboard():
+    return FileResponse("dashboard.html", media_type="text/html")
