@@ -1,5 +1,4 @@
 (function () {
-  // 1. Récupération de la clé API depuis la balise script
   const currentScript = document.currentScript;
   const apiKey = currentScript ? currentScript.getAttribute("data-api-key") : null;
 
@@ -8,22 +7,25 @@
     return;
   }
 
-  // 2. Requête vers ton API FastAPI Render
   fetch(`https://badgeboost-backend.onrender.com/api/v1/widget/${apiKey}`)
     .then((response) => {
       if (!response.ok) throw new Error("Clé API invalide ou erreur serveur");
       return response.json();
     })
     .then((data) => {
-      // 3. Création du container HTML du badge
       const badgeDiv = document.createElement("div");
       badgeDiv.id = "badgeboost-container";
+      
+      // Récupération des couleurs dynamiques
+      const bgColor = data.bg_color || "#f3f4f6";
+      const textColor = data.text_color || "#1f2937";
+
       badgeDiv.style.cssText = `
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background-color: #f3f4f6;
-        color: #1f2937;
+        background-color: ${bgColor};
+        color: ${textColor};
         padding: 8px 14px;
         border-radius: 20px;
         font-family: system-ui, sans-serif;
@@ -39,7 +41,6 @@
         ${data.show_branding ? '<span style="font-size:10px; color:#9ca3af; margin-left:6px;">by BadgeBoost</span>' : ''}
       `;
 
-      // Injecter le badge sur la page du client
       const targetElement = document.getElementById("badgeboost-widget") || document.body;
       targetElement.appendChild(badgeDiv);
     })
