@@ -17,28 +17,18 @@ app.add_middleware(
 def get_supabase_client():
     url = os.getenv("SUPABASE_URL", "")
     key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
-    
     if not url or not key:
-        raise HTTPException(
-            status_code=500, 
-            detail="Variables d'environnement manquantes dans Render"
-        )
-    
+        raise HTTPException(status_code=500, detail="Variables d'environnement manquantes dans Render")
     url = url.strip().strip("'").strip('"')
     if "/rest/v1" in url:
         url = url.split("/rest/v1")[0]
     url = url.rstrip("/")
-    
     return create_client(url, key)
 
+# Route pour la page d'accueil (Landing Page)
 @app.get("/")
-def home():
-    return {"status": "API BadgeBoost en ligne 🚀"}
-
-# Route pour distribuer le script JS
-@app.get("/widget.js")
-def get_widget_script():
-    return FileResponse("widget.js", media_type="application/javascript")
+def read_root():
+    return FileResponse("index.html", media_type="text/html")
 
 @app.get("/api/v1/widget/{api_key}")
 def get_widget(api_key: str):
