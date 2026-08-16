@@ -27,11 +27,16 @@
           },
           animation: {
             float: 'float 7s ease-in-out infinite',
+            'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
           },
           keyframes: {
             float: {
               '0%, 100%': { transform: 'translateY(0px)' },
               '50%': { transform: 'translateY(-12px)' },
+            },
+            pulseSubtle: {
+              '0%, 100%': { opacity: '1' },
+              '50%': { opacity: '0.85' },
             },
           },
         },
@@ -47,11 +52,21 @@
     ::-webkit-scrollbar-track { background: #0b0f17; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 999px; border: 2px solid #0b0f17; }
     ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .glass-card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .glass-card-hover:hover { border-color: rgba(59, 130, 246, 0.4); transform: translateY(-3px); box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.15); }
+    .bg-grid { background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px); background-size: 32px 32px; }
+    .text-gradient { background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .text-accent { background: linear-gradient(90deg, #60a5fa 0%, #818cf8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
   </style>
 </head>
 
-<body class="bg-[#0b0f17] text-slate-400 antialiased selection:bg-blue-500/30 selection:text-white">
+<body class="bg-[#0b0f17] text-slate-400 antialiased selection:bg-blue-500/30 selection:text-white relative overflow-x-hidden">
+
+  <!-- BACKGROUND DECORATIONS -->
+  <div class="fixed inset-0 bg-grid pointer-events-none z-0 opacity-40"></div>
+  <div class="fixed -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px] pointer-events-none z-0"></div>
+  <div class="fixed top-1/3 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-[128px] pointer-events-none z-0"></div>
 
   <!-- NAVIGATION -->
   <header class="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/80 bg-[#0b0f17]/80 backdrop-blur-md">
@@ -75,7 +90,7 @@
     </div>
   </header>
 
-  <main class="pt-32">
+  <main class="relative z-10 pt-32 pb-20">
     <!-- HERO SECTION -->
     <section class="relative mx-auto max-w-5xl px-6 text-center">
       <span class="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-semibold text-blue-400 mb-6">
@@ -98,7 +113,57 @@
       </div>
     </section>
 
-    <!-- SECTION PRICING -->
+    <!-- DEMO SECTION -->
+    <section id="demo" class="mx-auto max-w-5xl px-6 py-20 scroll-mt-20">
+      <div class="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl">
+        <div class="text-center mb-8">
+          <h2 class="font-display text-2xl font-bold text-white mb-2">Aperçu en direct</h2>
+          <p class="text-sm text-slate-400">Voici exactement ce que vos clients verront sous votre bouton d'achat.</p>
+        </div>
+        <div class="max-w-md mx-auto bg-slate-900 rounded-xl p-6 border border-slate-800/80 shadow-inner">
+          <div class="mb-4">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Exemple de fiche produit</span>
+            <h3 class="text-lg font-bold text-white mt-1">Montre Minimaliste Chrono</h3>
+            <p class="text-blue-400 font-bold mt-1">129,00 €</p>
+          </div>
+          <button class="w-full py-3.5 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-500 transition-all mb-4 flex items-center justify-center gap-2">
+            <span>Ajouter au panier</span>
+          </button>
+          <!-- WIDGET BADGEBOOST PREVIEW -->
+          <div class="pt-3 border-t border-slate-800 flex items-center justify-center gap-4 text-xs text-slate-300">
+            <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Paiement 100% Sécurisé</span>
+            <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Garantie 30 jours</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="mx-auto max-w-6xl px-6 py-20 scroll-mt-20">
+      <div class="text-center mb-16">
+        <h2 class="font-display text-3xl font-bold text-white sm:text-4xl">Pensé pour maximiser vos conversions</h2>
+        <p class="mt-4 text-slate-400">Une installation en 2 minutes sans toucher au code complexe.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass-card glass-card-hover rounded-2xl p-8">
+          <div class="w-12 h-12 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center mb-6 font-bold text-xl">⚡</div>
+          <h3 class="font-display text-xl font-bold text-white mb-3">Ultra Léger</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Un script optimisé de moins de 5 Ko qui ne ralentit aucunement le chargement de votre boutique.</p>
+        </div>
+        <div class="glass-card glass-card-hover rounded-2xl p-8">
+          <div class="w-12 h-12 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mb-6 font-bold text-xl">🎨</div>
+          <h3 class="font-display text-xl font-bold text-white mb-3">100% Personnalisable</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Ajustez les couleurs, icônes et textes directement depuis le dashboard pour correspondre à votre marque.</p>
+        </div>
+        <div class="glass-card glass-card-hover rounded-2xl p-8">
+          <div class="w-12 h-12 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center mb-6 font-bold text-xl">🛒</div>
+          <h3 class="font-display text-xl font-bold text-white mb-3">Shopify & WooCommerce</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">Incorporez le tag facilement sur toutes vos plateformes e-commerce favorites en un clic.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING SECTION -->
     <section id="pricing" class="mx-auto max-w-6xl px-6 py-24 scroll-mt-20">
       <div class="text-center mb-16">
         <h2 class="font-display text-3xl font-bold text-white sm:text-4xl">Tarifs simples et transparents</h2>
@@ -107,7 +172,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- PLAN STARTER (0$) -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 flex flex-col justify-between">
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between">
           <div>
             <h3 class="font-display text-xl font-bold text-white mb-2">Starter</h3>
             <p class="text-xs text-slate-400 mb-6">Pour tester BadgeBoost sur votre boutique.</p>
@@ -127,7 +192,7 @@
         </div>
 
         <!-- PLAN PRO (15$) -->
-        <div class="relative rounded-2xl border-2 border-blue-500 bg-slate-900/80 p-8 flex flex-col justify-between shadow-2xl shadow-blue-500/10">
+        <div class="relative rounded-2xl border-2 border-blue-500 bg-slate-900/90 p-8 flex flex-col justify-between shadow-2xl shadow-blue-500/10">
           <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">
             Recommandé
           </span>
@@ -145,13 +210,14 @@
               <li class="flex items-center gap-2">✓ Support prioritaire</li>
             </ul>
           </div>
+          <!-- LIEN STRIPE PRO -->
           <a href="https://buy.stripe.com/test_cNi3cx4ZoekugaF9Gm9Zm00" class="block w-full text-center py-3 px-4 rounded-xl font-semibold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/25">
             Passer à Pro (15$/mois)
           </a>
         </div>
 
         <!-- PLAN AGENCE (29$) -->
-        <div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 flex flex-col justify-between">
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between">
           <div>
             <h3 class="font-display text-xl font-bold text-white mb-2">Agence</h3>
             <p class="text-xs text-slate-400 mb-6">Pour gérer plusieurs boutiques clients.</p>
@@ -165,6 +231,7 @@
               <li class="flex items-center gap-2">✓ Support dédié 24/7</li>
             </ul>
           </div>
+          <!-- LIEN STRIPE AGENCE -->
           <a href="https://buy.stripe.com/test_9B6bJ31Nc90a7E905M9Zm02" class="block w-full text-center py-3 px-4 rounded-xl font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors">
             Rejoindre le Plan Agence
           </a>
@@ -173,7 +240,7 @@
     </section>
   </main>
 
-  <footer class="border-t border-slate-800/80 bg-[#0b0f17] py-8 text-center text-xs text-slate-500">
+  <footer class="border-t border-slate-800/80 bg-[#0b0f17] py-8 text-center text-xs text-slate-500 relative z-10">
     <p>© 2026 BadgeBoost. Tous droits réservés.</p>
   </footer>
 </body>
