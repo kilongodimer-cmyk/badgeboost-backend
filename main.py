@@ -25,6 +25,11 @@ def get_supabase_client():
     url = url.rstrip("/")
     return create_client(url, key)
 
+    # Route pour le dashboard
+@app.get("/dashboard.html")
+async def read_dashboard():
+    return FileResponse("dashboard.html")
+
 # Route pour la page d'accueil (Landing Page)
 @app.get("/")
 def read_root():
