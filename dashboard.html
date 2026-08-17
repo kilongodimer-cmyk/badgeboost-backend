@@ -1,161 +1,202 @@
 <!DOCTYPE html>
 <html lang="fr" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BadgeBoost - Tableau de Bord</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0b0f17; color: #94a3b8; }
-        .glass-panel { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BadgeBoost — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { background-color: #0b0f17; color: #94a3b8; font-family: 'Inter', sans-serif; }
+    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+    .neon-glow { box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+  </style>
 </head>
-<body class="bg-[#0b0f17] text-slate-300 min-h-screen">
+<body class="bg-[#0b0f17] text-slate-300 min-h-screen antialiased selection:bg-blue-500/30 selection:text-white">
 
-    <!-- HEADER / TOP BAR -->
-    <header class="border-b border-slate-800/80 bg-[#0b0f17]/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-            <a href="/" class="flex items-center gap-2.5">
-                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/20">
-                    ⚡
-                </div>
-                <span class="text-xl font-bold text-white tracking-tight">BadgeBoost</span>
-            </a>
-
-            <div class="flex items-center gap-4">
-                <!-- BADGE DE STATUT DYNAMIQUE -->
-                <span id="plan-badge" class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                    <span id="plan-text">Plan Starter - Gratuit</span>
-                </span>
-
-                <!-- BOUTON UPGRADE (MASQUÉ SI PRO) -->
-                <a id="upgrade-btn" href="https://buy.stripe.com/test_cNi3cx4ZoekugaF9Gm9Zm00" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition-all shadow-md shadow-blue-600/20">
-                    ⚡ Passer à Pro (15$/mois)
-                </a>
-            </div>
+  <!-- HEADER / TOP BAR -->
+  <header class="border-b border-slate-800/80 bg-[#0b0f17]/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold shadow-lg shadow-blue-500/20 group-hover:bg-blue-500 transition-all">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
         </div>
-    </header>
+        <span class="text-xl font-bold text-white tracking-tight">BadgeBoost</span>
+      </a>
 
-    <!-- DASHBOARD CONTENT -->
-    <main class="mx-auto max-w-7xl px-6 py-10">
-        <div class="mb-8">
-            <h1 class="text-2xl font-bold text-white">Créateur de Badge</h1>
-            <p class="text-sm text-slate-400">Configurez votre badge de confiance et intégrez-le à votre boutique.</p>
+      <div class="flex items-center gap-4">
+        <!-- BADGE DE STATUT -->
+        <span id="plan-badge" class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
+          <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
+          <span id="plan-text">Plan Starter - Gratuit</span>
+        </span>
+
+        <!-- CTA UPGRADE -->
+        <a id="upgrade-btn" href="https://buy.stripe.com/test_cNi3cx4ZoekugaF9Gm9Zm00" class="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md shadow-blue-600/20">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Passer à Pro (15$/mois)
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="mx-auto max-w-7xl px-6 py-10">
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Créateur de Badge</h1>
+        <p class="text-sm text-slate-400 mt-1">Configurez votre badge de confiance et intégrez-le en quelques secondes.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- EDITEUR -->
+      <div class="space-y-6">
+        <!-- TEXTE -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Texte du badge</label>
+          <input type="text" id="badge-text-input" value="Garantie Satisfait ou Remboursé 30 jours" class="w-full rounded-xl bg-slate-900/80 border border-slate-700/80 px-4 py-3 text-sm text-white focus:border-blue-500 focus:outline-none transition-all">
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- COLONNE GAUCHE: ÉDITEUR -->
-            <div class="space-y-6">
-                <!-- TEXTE DU BADGE -->
-                <div class="glass-panel rounded-xl p-6">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Texte du badge</label>
-                    <input type="text" id="badge-text-input" value="Garantie Satisfait ou Remboursé 30 jours" class="w-full rounded-lg bg-slate-900 border border-slate-700 px-4 py-2.5 text-sm text-white focus:border-blue-500 focus:outline-none">
-                </div>
+        <!-- COULEUR -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Couleur principale</label>
+          <div class="flex items-center gap-3 mb-4">
+            <input type="color" id="badge-color-picker" value="#10b981" class="h-10 w-10 cursor-pointer rounded-lg bg-transparent border-0">
+            <span class="text-sm text-slate-400 font-mono" id="hex-label">#10b981</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="setColor('#10b981')" class="h-7 w-7 rounded-full bg-emerald-500 ring-2 ring-offset-2 ring-offset-[#0b0f17] ring-transparent hover:ring-emerald-500 transition-all"></button>
+            <button onclick="setColor('#2563eb')" class="h-7 w-7 rounded-full bg-blue-600 ring-2 ring-offset-2 ring-offset-[#0b0f17] ring-transparent hover:ring-blue-500 transition-all"></button>
+            <button onclick="setColor('#6366f1')" class="h-7 w-7 rounded-full bg-indigo-500 ring-2 ring-offset-2 ring-offset-[#0b0f17] ring-transparent hover:ring-indigo-500 transition-all"></button>
+            <button onclick="setColor('#f59e0b')" class="h-7 w-7 rounded-full bg-amber-500 ring-2 ring-offset-2 ring-offset-[#0b0f17] ring-transparent hover:ring-amber-500 transition-all"></button>
+            <button onclick="setColor('#ef4444')" class="h-7 w-7 rounded-full bg-red-500 ring-2 ring-offset-2 ring-offset-[#0b0f17] ring-transparent hover:ring-red-500 transition-all"></button>
+          </div>
+        </div>
 
-                <!-- COULEUR DU BADGE -->
-                <div class="glass-panel rounded-xl p-6">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Couleur principale</label>
-                    <div class="flex items-center gap-3 mb-4">
-                        <input type="color" id="badge-color-picker" value="#10b981" class="h-10 w-10 cursor-pointer rounded bg-transparent border-0">
-                        <span class="text-sm text-slate-400">Couleur personnalisée</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-slate-500 mr-2">Rapide :</span>
-                        <button onclick="setColor('#10b981')" class="h-6 w-6 rounded-full bg-emerald-500 border border-white/20"></button>
-                        <button onclick="setColor('#2563eb')" class="h-6 w-6 rounded-full bg-blue-600 border border-white/20"></button>
-                        <button onclick="setColor('#0f172a')" class="h-6 w-6 rounded-full bg-slate-900 border border-white/20"></button>
-                        <button onclick="setColor('#8b5cf6')" class="h-6 w-6 rounded-full bg-purple-500 border border-white/20"></button>
-                        <button onclick="setColor('#f59e0b')" class="h-6 w-6 rounded-full bg-amber-500 border border-white/20"></button>
-                        <button onclick="setColor('#ef4444')" class="h-6 w-6 rounded-full bg-red-500 border border-white/20"></button>
-                    </div>
-                </div>
+        <!-- STYLES -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Style visuel</label>
+          <div class="grid grid-cols-3 gap-3">
+            <button id="btn-style-glass" onclick="setStyle('glass')" class="rounded-xl border border-blue-500 bg-blue-500/10 py-3 text-xs font-semibold text-white transition-all">Glass</button>
+            <button id="btn-style-neon" onclick="setStyle('neon')" class="rounded-xl border border-slate-800 bg-slate-900/60 py-3 text-xs font-semibold text-slate-400 hover:border-slate-700 transition-all">Néon</button>
+            <button id="btn-style-minimal" onclick="setStyle('minimal')" class="rounded-xl border border-slate-800 bg-slate-900/60 py-3 text-xs font-semibold text-slate-400 hover:border-slate-700 transition-all">Minimaliste</button>
+          </div>
+        </div>
+      </div>
 
-                <!-- STYLE DU BADGE -->
-                <div class="glass-panel rounded-xl p-6">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Style du badge</label>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button onclick="setStyle('glass')" class="rounded-lg border border-blue-500 bg-blue-500/10 py-2.5 text-xs font-medium text-white">Glass</button>
-                        <button onclick="setStyle('neon')" class="rounded-lg border border-slate-800 bg-slate-900 py-2.5 text-xs font-medium text-slate-400 hover:border-slate-700">Néon</button>
-                        <button onclick="setStyle('minimal')" class="rounded-lg border border-slate-800 bg-slate-900 py-2.5 text-xs font-medium text-slate-400 hover:border-slate-700">Minimaliste</button>
-                    </div>
-                </div>
+      <!-- DROITE: PREVIEW ET CODE -->
+      <div class="space-y-6">
+        <!-- PREVIEW -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Aperçu en direct</label>
+            <span class="text-[11px] text-slate-500">Mise à jour instantanée</span>
+          </div>
+          <div class="flex flex-col items-center justify-center p-10 bg-slate-950/80 rounded-xl border border-slate-800/80 min-h-[180px]">
+            <div id="badge-preview" class="px-5 py-3 rounded-xl border flex flex-col items-center gap-1 transition-all" style="background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #ffffff;">
+              <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span id="preview-text" class="text-sm font-semibold">Garantie Satisfait ou Remboursé 30 jours</span>
+              </div>
+              <small id="watermark-preview" class="text-[10px] text-slate-500 font-medium">Propulsé par BadgeBoost</small>
             </div>
+          </div>
+        </div>
 
-            <!-- COLONNE DROITE: APERÇU ET CODE -->
-            <div class="space-y-6">
-                <!-- APERÇU EN DIRECT -->
-                <div class="glass-panel rounded-xl p-6">
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-4">Aperçu en direct</label>
-                    <div class="flex flex-col items-center justify-center p-8 bg-slate-950 rounded-lg border border-slate-800/80 min-h-[160px]">
-                        <div id="badge-preview" class="px-5 py-3 rounded-xl border flex flex-col items-center gap-1 shadow-lg transition-all" style="background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #ffffff;">
-                            <div class="flex items-center gap-2">
-                                <span>🔒</span>
-                                <span id="preview-text" class="text-sm font-semibold">Garantie Satisfait ou Remboursé 30 jours</span>
-                            </div>
-                            <!-- FILIGRANE STARTER -->
-                            <small id="watermark-preview" class="text-[10px] text-slate-500">Propulsé par BadgeBoost</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CODE D'INTÉGRATION -->
-                <div class="glass-panel rounded-xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Code d'intégration HTML</label>
-                        <button onclick="copyCode()" id="copy-btn" class="rounded bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300 hover:bg-slate-700 transition-colors">Copier</button>
-                    </div>
-                    <pre class="overflow-x-auto rounded-lg bg-slate-950 p-4 text-xs font-mono text-emerald-400 border border-slate-800"><code id="code-snippet">&lt;!-- BadgeBoost Trust Badge --&gt;
+        <!-- CODE SNIPPET -->
+        <div class="glass-card rounded-2xl p-6 border border-slate-800">
+          <div class="flex items-center justify-between mb-4">
+            <label class="text-xs font-semibold uppercase tracking-wider text-slate-400">Code d'intégration HTML</label>
+            <button onclick="copyCode()" id="copy-btn" class="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-200 hover:bg-slate-700 transition-colors">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Copier
+            </button>
+          </div>
+          <pre class="overflow-x-auto rounded-xl bg-slate-950 p-4 text-xs font-mono text-emerald-400 border border-slate-800/80"><code id="code-snippet">&lt;!-- BadgeBoost Trust Badge --&gt;
 &lt;script src="https://badgeboost-backend.onrender.com/widget.js" data-text="Garantie Satisfait ou Remboursé 30 jours" data-color="#10b981"&gt;&lt;/script&gt;</code></pre>
-                </div>
-            </div>
         </div>
-    </main>
+      </div>
+    </div>
+  </main>
 
-    <script>
-        // LECTURE DU PLAN DANS L'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const currentPlan = urlParams.get('plan');
+  <script>
+    // LECTURE DU PLAN STRIPE
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPlan = urlParams.get('plan');
 
-        if (currentPlan === 'pro' || currentPlan === 'agence') {
-            document.getElementById('plan-text').innerText = 'Plan Pro - Actif';
-            document.getElementById('upgrade-btn').style.display = 'none';
-            document.getElementById('watermark-preview').style.display = 'none';
-        }
+    if (currentPlan === 'pro' || currentPlan === 'agence') {
+      document.getElementById('plan-text').innerText = 'Plan Pro - Actif';
+      document.getElementById('upgrade-btn').style.display = 'none';
+      document.getElementById('watermark-preview').style.display = 'none';
+    }
 
-        // ÉDITION DYNAMIQUE DU BADGE
-        const input = document.getElementById('badge-text-input');
-        const previewText = document.getElementById('preview-text');
-        const colorPicker = document.getElementById('badge-color-picker');
-        const badgePreview = document.getElementById('badge-preview');
-        const codeSnippet = document.getElementById('code-snippet');
+    // EDITION DYNAMIQUE
+    const input = document.getElementById('badge-text-input');
+    const previewText = document.getElementById('preview-text');
+    const colorPicker = document.getElementById('badge-color-picker');
+    const hexLabel = document.getElementById('hex-label');
+    const badgePreview = document.getElementById('badge-preview');
+    const codeSnippet = document.getElementById('code-snippet');
 
-        function updateBadge() {
-            previewText.innerText = input.value;
-            const color = colorPicker.value;
-            badgePreview.style.borderColor = color;
-            badgePreview.style.backgroundColor = color + '1a'; // 10% opacity
-            
-            codeSnippet.innerText = `<!-- BadgeBoost Trust Badge -->\n<script src="https://badgeboost-backend.onrender.com/widget.js" data-text="${input.value}" data-color="${color}"><\/script>`;
-        }
+    function updateBadge() {
+      previewText.innerText = input.value;
+      const color = colorPicker.value;
+      hexLabel.innerText = color;
+      badgePreview.style.borderColor = color;
+      badgePreview.style.backgroundColor = color + '1a';
+      
+      codeSnippet.innerText = `<!-- BadgeBoost Trust Badge -->\n<script src="https://badgeboost-backend.onrender.com/widget.js" data-text="${input.value}" data-color="${color}"><\/script>`;
+    }
 
-        input.addEventListener('input', updateBadge);
-        colorPicker.addEventListener('input', updateBadge);
+    input.addEventListener('input', updateBadge);
+    colorPicker.addEventListener('input', updateBadge);
 
-        function setColor(hex) {
-            colorPicker.value = hex;
-            updateBadge();
-        }
+    function setColor(hex) {
+      colorPicker.value = hex;
+      updateBadge();
+    }
 
-        function copyCode() {
-            navigator.clipboard.writeText(codeSnippet.innerText);
-            const btn = document.getElementById('copy-btn');
-            btn.innerText = 'Copié !';
-            setTimeout(() => btn.innerText = 'Copier', 2000);
-        }
-    </script>
+    function setStyle(style) {
+      document.getElementById('btn-style-glass').className = "rounded-xl border border-slate-800 bg-slate-900/60 py-3 text-xs font-semibold text-slate-400 hover:border-slate-700 transition-all";
+      document.getElementById('btn-style-neon').className = "rounded-xl border border-slate-800 bg-slate-900/60 py-3 text-xs font-semibold text-slate-400 hover:border-slate-700 transition-all";
+      document.getElementById('btn-style-minimal').className = "rounded-xl border border-slate-800 bg-slate-900/60 py-3 text-xs font-semibold text-slate-400 hover:border-slate-700 transition-all";
+
+      const activeBtn = document.getElementById(`btn-style-${style}`);
+      if (activeBtn) {
+        activeBtn.className = "rounded-xl border border-blue-500 bg-blue-500/10 py-3 text-xs font-semibold text-white transition-all";
+      }
+
+      if (style === 'neon') {
+        badgePreview.className = "px-5 py-3 rounded-xl border flex flex-col items-center gap-1 transition-all neon-glow";
+      } else {
+        badgePreview.className = "px-5 py-3 rounded-xl border flex flex-col items-center gap-1 transition-all";
+      }
+    }
+
+    function copyCode() {
+      navigator.clipboard.writeText(codeSnippet.innerText);
+      const btn = document.getElementById('copy-btn');
+      btn.innerText = 'Copié !';
+      setTimeout(() => {
+        btn.innerHTML = `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg> Copier`;
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
