@@ -3,9 +3,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from supabase import create_client
+from fastapi.staticfiles import StaticFiles
 
+# 1. Initialisation de l'application
 app = FastAPI()
 
+# 2. Configuration des fichiers statiques (serve index.html à la racine)
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
+
+# 3. Middlewares
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
