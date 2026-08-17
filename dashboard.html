@@ -479,22 +479,21 @@
     setActivePreset('#10b981');
     renderAll();
   </script>
-
+  
 <script>
-  // 1. Récupérer le paramètre "plan" dans l'adresse (ex: ?plan=pro)
   const urlParams = new URLSearchParams(window.location.search);
   const plan = urlParams.get('plan');
 
-  // 2. Cibler l'élément du badge (assurez-vous que l'élément a bien un ID ou adaptez le sélecteur)
-  const badgeElement = document.querySelector('header span') || document.getElementById('plan-badge');
+  const badge = document.getElementById('plan-badge');
 
-  // 3. Modifier l'affichage visuel selon le plan
-  if (plan === 'pro') {
-    badgeElement.innerHTML = '⚡ Plan Pro — 15$/mois';
-    badgeElement.className = 'px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-  } else if (plan === 'business') {
-    badgeElement.innerHTML = '🚀 Plan Business — 29$/mois';
-    badgeElement.className = 'px-3 py-1 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20';
+  if (badge) {
+    if (plan === 'pro') {
+      badge.innerHTML = ' Plan Pro — 15$/mois';
+      badge.className = 'px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+    } else if (plan === 'business') {
+      badge.innerHTML = ' Plan Business — 29$/mois';
+      badge.className = 'px-3 py-1 text-xs font-semibold rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20';
+    }
   }
 </script>
   
