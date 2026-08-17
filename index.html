@@ -27,16 +27,11 @@
           },
           animation: {
             float: 'float 7s ease-in-out infinite',
-            'pulse-subtle': 'pulseSubtle 3s ease-in-out infinite',
           },
           keyframes: {
             float: {
               '0%, 100%': { transform: 'translateY(0px)' },
               '50%': { transform: 'translateY(-12px)' },
-            },
-            pulseSubtle: {
-              '0%, 100%': { opacity: '1' },
-              '50%': { opacity: '0.85' },
             },
           },
         },
@@ -47,201 +42,613 @@
   <style>
     html { -webkit-text-size-adjust: 100%; }
     body { font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.01em; }
+
     ::selection { background: rgba(59, 130, 246, 0.3); color: #fff; }
+
     ::-webkit-scrollbar { width: 10px; }
     ::-webkit-scrollbar-track { background: #0b0f17; }
     ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 999px; border: 2px solid #0b0f17; }
     ::-webkit-scrollbar-thumb:hover { background: #334155; }
-    .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .glass-card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-    .glass-card-hover:hover { border-color: rgba(59, 130, 246, 0.4); transform: translateY(-3px); box-shadow: 0 20px 40px -15px rgba(37, 99, 235, 0.15); }
-    .bg-grid { background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px); background-size: 32px 32px; }
-    .text-gradient { background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .text-accent { background: linear-gradient(90deg, #60a5fa 0%, #818cf8 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* Accent text : bleu discret et mat */
+    .text-accent {
+      background: linear-gradient(90deg, #60a5fa 0%, #818cf8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .bg-grid {
+      background-image:
+        linear-gradient(to right, rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      -webkit-mask-image: radial-gradient(ellipse 75% 55% at 50% 0%, #000 35%, transparent 100%);
+      mask-image: radial-gradient(ellipse 75% 55% at 50% 0%, #000 35%, transparent 100%);
+    }
+
+    .btn-primary {
+      box-shadow: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .card-hover { transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s, background-color .35s; }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      border-color: rgba(100, 116, 139, 0.35);
+      background-color: rgba(15, 23, 42, 0.6);
+    }
+
+    .ring-inset-highlight { box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); }
+
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.7,.2,1); }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal { opacity: 1; transform: none; transition: none; }
+      * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+    }
   </style>
 </head>
 
-<body class="bg-[#0b0f17] text-slate-400 antialiased selection:bg-blue-500/30 selection:text-white relative overflow-x-hidden">
+<body class="bg-ink text-slate-200 antialiased overflow-x-hidden">
 
-  <!-- BACKGROUND DECORATIONS -->
-  <div class="fixed inset-0 bg-grid pointer-events-none z-0 opacity-40"></div>
-  <div class="fixed -top-40 -left-40 w-96 h-96 bg-blue-600/20 rounded-full blur-[128px] pointer-events-none z-0"></div>
-  <div class="fixed top-1/3 -right-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-[128px] pointer-events-none z-0"></div>
+  <!-- ===== Ambient background (very subtle) ===== -->
+  <div class="fixed inset-0 -z-10 pointer-events-none">
+    <div class="absolute inset-0 bg-grid"></div>
+    <div class="absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgba(59,130,246,0.07),transparent_70%)]"></div>
+  </div>
 
-  <!-- NAVIGATION -->
-  <header class="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/80 bg-[#0b0f17]/80 backdrop-blur-md">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-      <a href="/" class="flex items-center gap-2.5">
-        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 text-white font-bold text-lg shadow-lg shadow-blue-500/20">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+  <!-- ===== HEADER ===== -->
+  <header class="fixed top-0 inset-x-0 z-50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <nav class="mt-3 sm:mt-4 flex items-center justify-between rounded-2xl border border-slate-800/80 bg-slate-900/50 backdrop-blur-md px-4 sm:px-5 py-3 ring-inset-highlight">
+        <!-- Logo -->
+        <a href="#top" class="flex items-center gap-2.5 group">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600 group-hover:bg-blue-500 transition-colors">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          </span>
+          <span class="font-display text-lg font-bold tracking-tight text-white">Badge<span class="text-accent">Boost</span></span>
+        </a>
+
+        <!-- Desktop nav -->
+        <div class="hidden md:flex items-center gap-9 text-sm font-medium text-slate-400">
+          <a href="#avantages" class="hover:text-white transition-colors">Avantages</a>
+          <a href="#tarifs" class="hover:text-white transition-colors">Tarifs</a>
         </div>
-        <span class="font-display text-xl font-bold text-white tracking-tight">BadgeBoost</span>
-      </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-        <a href="#features" class="hover:text-white transition-colors">Fonctionnalités</a>
-        <a href="#demo" class="hover:text-white transition-colors">Démo</a>
-        <a href="#pricing" class="hover:text-white transition-colors">Tarifs</a>
+
+        <div class="flex items-center gap-3">
+          <a href="/dashboard" class="btn-primary inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-95">
+            Créer mon badge
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          <!-- Mobile menu button -->
+          <button id="menuBtn" class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-xl border border-slate-800 bg-slate-900/50 text-slate-300" aria-label="Menu">
+            <svg id="menuIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+          </button>
+        </div>
       </nav>
-      <div class="flex items-center gap-4">
-        <a href="/dashboard" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500 transition-all shadow-md shadow-blue-600/20">
-          Accéder au Dashboard
+
+      <!-- Mobile menu -->
+      <div id="mobileMenu" class="hidden md:hidden mt-2 rounded-2xl border border-slate-800/80 bg-slate-900/95 backdrop-blur-xl p-3 shadow-2xl">
+        <a href="#avantages" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-300 hover:bg-white/5">Avantages</a>
+        <a href="#tarifs" class="block rounded-xl px-4 py-3 text-sm font-medium text-slate-300 hover:bg-white/5">Tarifs</a>
+        <a href="/dashboard" class="mt-2 flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white">
+          Créer mon badge
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" /></svg>
         </a>
       </div>
     </div>
   </header>
 
-  <main class="relative z-10 pt-32 pb-20">
-    <!-- HERO SECTION -->
-    <section class="relative mx-auto max-w-5xl px-6 text-center">
-      <span class="inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-semibold text-blue-400 mb-6">
-        ✨ Boostez vos ventes e-commerce
-      </span>
-      <h1 class="font-display text-4xl sm:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
+  <main id="top" class="pt-32 sm:pt-40">
+
+    <!-- ===== HERO ===== -->
+    <section class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+      <!-- Eyebrow pill -->
+      <div class="reveal inline-flex items-center gap-2.5 rounded-full border border-slate-800 bg-slate-900/50 px-4 py-1.5 ring-inset-highlight">
+        <span class="relative flex h-2 w-2">
+          <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
+          <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+        </span>
+        <span class="text-xs font-medium tracking-wide text-slate-300">Optimisé pour Shopify &amp; WooCommerce</span>
+      </div>
+
+      <!-- Title -->
+      <h1 class="reveal mt-7 mx-auto max-w-4xl font-display text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.06] tracking-tight text-white" style="transition-delay:.08s">
         Rassurez vos clients.<br />
         <span class="text-accent">Convertissez plus.</span>
       </h1>
-      <p class="mx-auto max-w-2xl text-lg text-slate-400 mb-8">
-        BadgeBoost place des badges de réassurance discrets sous votre bouton « Ajouter au panier » — paiement sécurisé, livraison rapide, garantie — pour lever les dernières objections.
+
+      <!-- Sub-heading -->
+      <p class="reveal mx-auto mt-6 max-w-2xl text-base sm:text-lg text-slate-400 leading-relaxed" style="transition-delay:.16s">
+        BadgeBoost place des badges de réassurance discrets sous votre bouton
+        <span class="text-slate-200 font-medium">«&nbsp;Ajouter au panier&nbsp;»</span> — paiement sécurisé, livraison rapide, garantie —
+        pour lever les dernières objections et réduire l'abandon de panier.
       </p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-        <a href="/dashboard" class="w-full sm:w-auto rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white hover:bg-blue-500 shadow-lg shadow-blue-500/25 transition-all">
+
+      <!-- CTAs -->
+      <div class="reveal mt-9 flex flex-col sm:flex-row items-center justify-center gap-3.5" style="transition-delay:.24s">
+        <a href="/dashboard" class="btn-primary group inline-flex items-center gap-2.5 rounded-xl bg-blue-600 px-7 py-3.5 text-base font-semibold text-white transition-all hover:bg-blue-500 active:scale-95 w-full sm:w-auto justify-center">
           Essayer gratuitement
-        </a>
-        <a href="#pricing" class="w-full sm:w-auto rounded-xl border border-slate-800 bg-slate-900/50 px-8 py-4 text-base font-semibold text-slate-300 hover:bg-slate-800 transition-all">
-          Voir les tarifs
+          <svg class="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" /></svg>
         </a>
       </div>
-    </section>
 
-    <!-- DEMO SECTION -->
-    <section id="demo" class="mx-auto max-w-5xl px-6 py-20 scroll-mt-20">
-      <div class="glass-card rounded-2xl p-8 border border-slate-800 shadow-2xl">
-        <div class="text-center mb-8">
-          <h2 class="font-display text-2xl font-bold text-white mb-2">Aperçu en direct</h2>
-          <p class="text-sm text-slate-400">Voici exactement ce que vos clients verront sous votre bouton d'achat.</p>
+      <!-- Trust points -->
+      <div class="reveal mt-8 flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-xs text-slate-500" style="transition-delay:.3s">
+        <span class="inline-flex items-center gap-2">
+          <svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          Sans carte bancaire
+        </span>
+        <span class="inline-flex items-center gap-2">
+          <svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          Installation en 2 minutes
+        </span>
+        <span class="inline-flex items-center gap-2">
+          <svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          Compatible Shopify &amp; WooCommerce
+        </span>
+      </div>
+
+      <!-- Stats -->
+      <div class="reveal mx-auto mt-16 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-slate-800 bg-slate-800/60 sm:grid-cols-4" style="transition-delay:.36s">
+        <div class="bg-slate-900/70 px-6 py-7">
+          <p class="font-display text-3xl font-bold tracking-tight text-white tabular-nums">+70%</p>
+          <p class="mt-1.5 text-xs text-slate-500">taux de conversion</p>
         </div>
-        <div class="max-w-md mx-auto bg-slate-900 rounded-xl p-6 border border-slate-800/80 shadow-inner">
-          <div class="mb-4">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Exemple de fiche produit</span>
-            <h3 class="text-lg font-bold text-white mt-1">Montre Minimaliste Chrono</h3>
-            <p class="text-blue-400 font-bold mt-1">129,00 €</p>
-          </div>
-          <button class="w-full py-3.5 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-lg hover:bg-blue-500 transition-all mb-4 flex items-center justify-center gap-2">
-            <span>Ajouter au panier</span>
-          </button>
-          <!-- WIDGET BADGEBOOST PREVIEW -->
-          <div class="pt-3 border-t border-slate-800 flex items-center justify-center gap-4 text-xs text-slate-300">
-            <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Paiement 100% Sécurisé</span>
-            <span class="flex items-center gap-1.5"><svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Garantie 30 jours</span>
-          </div>
+        <div class="bg-slate-900/70 px-6 py-7">
+          <p class="font-display text-3xl font-bold tracking-tight text-white tabular-nums">2 min</p>
+          <p class="mt-1.5 text-xs text-slate-500">d'installation</p>
+        </div>
+        <div class="bg-slate-900/70 px-6 py-7">
+          <p class="font-display text-3xl font-bold tracking-tight text-white tabular-nums">10 000+</p>
+          <p class="mt-1.5 text-xs text-slate-500">boutiques actives</p>
+        </div>
+        <div class="bg-slate-900/70 px-6 py-7">
+          <p class="font-display text-3xl font-bold tracking-tight text-white tabular-nums">4,9<span class="text-slate-600">/5</span></p>
+          <p class="mt-1.5 text-xs text-slate-500">note moyenne</p>
         </div>
       </div>
     </section>
 
-    <!-- FEATURES SECTION -->
-    <section id="features" class="mx-auto max-w-6xl px-6 py-20 scroll-mt-20">
-      <div class="text-center mb-16">
-        <h2 class="font-display text-3xl font-bold text-white sm:text-4xl">Pensé pour maximiser vos conversions</h2>
-        <p class="mt-4 text-slate-400">Une installation en 2 minutes sans toucher au code complexe.</p>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="glass-card glass-card-hover rounded-2xl p-8">
-          <div class="w-12 h-12 rounded-xl bg-blue-600/20 text-blue-400 flex items-center justify-center mb-6 font-bold text-xl">⚡</div>
-          <h3 class="font-display text-xl font-bold text-white mb-3">Ultra Léger</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">Un script optimisé de moins de 5 Ko qui ne ralentit aucunement le chargement de votre boutique.</p>
-        </div>
-        <div class="glass-card glass-card-hover rounded-2xl p-8">
-          <div class="w-12 h-12 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center mb-6 font-bold text-xl">🎨</div>
-          <h3 class="font-display text-xl font-bold text-white mb-3">100% Personnalisable</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">Ajustez les couleurs, icônes et textes directement depuis le dashboard pour correspondre à votre marque.</p>
-        </div>
-        <div class="glass-card glass-card-hover rounded-2xl p-8">
-          <div class="w-12 h-12 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center mb-6 font-bold text-xl">🛒</div>
-          <h3 class="font-display text-xl font-bold text-white mb-3">Shopify & WooCommerce</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">Incorporez le tag facilement sur toutes vos plateformes e-commerce favorites en un clic.</p>
+    <!-- ===== COMPATIBILITY STRIP ===== -->
+    <section class="relative mx-auto mt-20 max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal flex flex-col items-center gap-6 border-y border-slate-800/60 py-8">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-slate-500">Compatible avec vos outils préférés</p>
+        <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-slate-600">
+          <span class="font-display text-lg font-bold tracking-tight">Shopify</span>
+          <span class="font-display text-lg font-bold tracking-tight">WooCommerce</span>
+          <span class="font-display text-lg font-bold tracking-tight">BigCommerce</span>
+          <span class="font-display text-lg font-bold tracking-tight">Magento</span>
+          <span class="font-display text-lg font-bold tracking-tight">Webflow</span>
         </div>
       </div>
     </section>
 
-    <!-- PRICING SECTION -->
-    <section id="pricing" class="mx-auto max-w-6xl px-6 py-24 scroll-mt-20">
-      <div class="text-center mb-16">
-        <h2 class="font-display text-3xl font-bold text-white sm:text-4xl">Tarifs simples et transparents</h2>
-        <p class="mt-4 text-slate-400">Choisissez le plan adapté à la taille de votre boutique.</p>
+    <!-- ===== DEMO / WIDGET PREVIEW ===== -->
+    <section id="demo" class="relative mx-auto mt-24 sm:mt-32 max-w-6xl px-4 sm:px-6 lg:px-8 scroll-mt-28">
+      <div class="reveal text-center mb-12">
+        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-400">Démo interactive</span>
+        <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">Vos badges, sous le panier</h2>
+        <p class="mt-4 text-slate-400 max-w-xl mx-auto">Personnalisez le style en direct. C'est exactement ce que verront vos clients.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- PLAN STARTER (0$) -->
-        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between">
-          <div>
-            <h3 class="font-display text-xl font-bold text-white mb-2">Starter</h3>
-            <p class="text-xs text-slate-400 mb-6">Pour tester BadgeBoost sur votre boutique.</p>
-            <div class="flex items-baseline gap-1 mb-6">
-              <span class="font-display text-4xl font-extrabold text-white">0$</span>
-              <span class="text-slate-400">/mois</span>
+      <!-- Controls -->
+      <div class="reveal flex flex-wrap items-center justify-center gap-3 mb-8">
+        <div class="flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/50 p-1">
+          <button data-style="glass" class="styleBtn px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white">Glass</button>
+          <button data-style="neon" class="styleBtn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all">Néon</button>
+          <button data-style="minimal" class="styleBtn px-4 py-2 rounded-lg text-sm font-medium text-slate-400 hover:text-white transition-all">Minimal</button>
+        </div>
+        <button id="animToggle" class="inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-2.5 text-sm font-medium text-slate-300 hover:border-slate-700 transition-all">
+          <span id="animDot" class="h-2 w-2 rounded-full bg-emerald-400"></span>
+          Animations : <span id="animLabel" class="text-emerald-400">Activées</span>
+        </button>
+      </div>
+
+      <!-- Browser mockup -->
+      <div class="reveal relative rounded-3xl border border-slate-800 bg-slate-900/50 backdrop-blur-xl p-2 shadow-[0_40px_100px_-50px_rgba(0,0,0,0.9)] ring-inset-highlight">
+        <!-- Window bar -->
+        <div class="flex items-center gap-2 px-4 py-3">
+          <span class="h-3 w-3 rounded-full bg-slate-700"></span>
+          <span class="h-3 w-3 rounded-full bg-slate-700"></span>
+          <span class="h-3 w-3 rounded-full bg-slate-700"></span>
+          <div class="ml-4 flex-1 max-w-sm rounded-md bg-slate-800/70 px-4 py-1.5 text-xs text-slate-500 truncate">https://ma-boutique.fr/produit/casque-pro</div>
+        </div>
+
+        <!-- Product sheet -->
+        <div class="p-5 sm:p-8 rounded-2xl bg-ink border border-slate-800/60">
+          <div class="mx-auto max-w-xl">
+            <!-- Product meta -->
+            <div class="flex items-center gap-2.5 text-xs">
+              <span class="rounded-full bg-slate-800/80 px-2.5 py-1 text-slate-300">Casque audio</span>
+              <span class="flex items-center gap-0.5 text-amber-400">
+                <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              </span>
+              <span class="text-slate-500">(2 341 avis)</span>
             </div>
-            <ul class="space-y-3 text-sm text-slate-300 mb-8">
-              <li class="flex items-center gap-2">✓ 1 Badge personnalisé</li>
-              <li class="flex items-center gap-2">✓ Intégration HTML & JS</li>
-              <li class="flex items-center gap-2 text-slate-500">✕ Filigrane BadgeBoost présent</li>
-            </ul>
+
+            <h3 class="mt-3 font-display text-2xl sm:text-3xl font-bold tracking-tight text-white">Casque Audio Pro Max</h3>
+
+            <div class="mt-3 flex items-end gap-3">
+              <span class="font-display text-4xl font-bold tracking-tight text-white tabular-nums">129,99€</span>
+              <span class="mb-1 text-slate-500 line-through tabular-nums">189,99€</span>
+              <span class="mb-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-400">-31%</span>
+            </div>
+
+            <!-- Quantity + Add to cart -->
+            <div class="mt-6 flex items-stretch gap-3">
+              <div class="flex items-center rounded-xl border border-slate-800 bg-slate-900/60">
+                <button id="qtyMinus" class="flex h-full w-11 items-center justify-center rounded-l-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors" aria-label="Diminuer la quantité">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14" /></svg>
+                </button>
+                <span id="qtyValue" class="w-10 text-center text-sm font-semibold text-white tabular-nums">1</span>
+                <button id="qtyPlus" class="flex h-full w-11 items-center justify-center rounded-r-xl text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors" aria-label="Augmenter la quantité">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" /></svg>
+                </button>
+              </div>
+              <a href="/dashboard" class="btn-primary inline-flex flex-1 items-center justify-center gap-2.5 rounded-xl bg-blue-600 px-6 py-4 text-base font-semibold text-white transition-colors hover:bg-blue-500">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
+                Ajouter au panier
+              </a>
+            </div>
+
+            <!-- Badges -->
+            <div class="mt-6">
+              <div class="flex items-center gap-3 text-[11px] font-medium text-slate-500 mb-3">
+                <span class="h-px flex-1 bg-slate-800"></span>
+                <span class="inline-flex items-center gap-1.5">
+                  <span class="flex h-4 w-4 items-center justify-center rounded bg-blue-600">
+                    <svg class="h-2.5 w-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  </span>
+                  <span>Propulsé par <span class="text-blue-400 font-semibold">BadgeBoost</span></span>
+                </span>
+                <span class="h-px flex-1 bg-slate-800"></span>
+              </div>
+              <div id="badgeContainer" class="transition-opacity duration-300"></div>
+            </div>
           </div>
-          <a href="/dashboard" class="block w-full text-center py-3 px-4 rounded-xl font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors">
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== ADVANTAGES ===== -->
+    <section id="avantages" class="relative mx-auto mt-28 sm:mt-36 max-w-7xl px-4 sm:px-6 lg:px-8 scroll-mt-28">
+      <div class="reveal text-center">
+        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-400">Pourquoi BadgeBoost ?</span>
+        <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">L'outil indispensable des e-commerçants</h2>
+        <p class="mt-4 text-slate-400 max-w-2xl mx-auto">Chaque visiteur qui abandonne son panier est une vente perdue. BadgeBoost lève les dernières objections, au moment exact où ça compte.</p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Card 1 -->
+        <div class="reveal card-hover group rounded-3xl border border-slate-800 bg-slate-900/50 p-7 ring-inset-highlight">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 group-hover:scale-110 transition-transform">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg>
+          </div>
+          <h3 class="mt-5 font-display text-lg font-bold tracking-tight text-white">Installe la confiance</h3>
+          <p class="mt-2.5 text-sm text-slate-400 leading-relaxed">Des signaux visuels qui rassurent instantanément vos visiteurs au moment décisif de l'achat.</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="reveal card-hover group rounded-3xl border border-slate-800 bg-slate-900/50 p-7 ring-inset-highlight" style="transition-delay:.08s">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400 group-hover:scale-110 transition-transform">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
+          </div>
+          <h3 class="mt-5 font-display text-lg font-bold tracking-tight text-white">Réduit les abandons de panier</h3>
+          <p class="mt-2.5 text-sm text-slate-400 leading-relaxed">Jusqu'à +70% de conversion en levant les dernières objections juste avant le paiement.</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="reveal card-hover group rounded-3xl border border-slate-800 bg-slate-900/50 p-7 ring-inset-highlight" style="transition-delay:.16s">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 group-hover:scale-110 transition-transform">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" /></svg>
+          </div>
+          <h3 class="mt-5 font-display text-lg font-bold tracking-tight text-white">Zéro ralentissement SEO</h3>
+          <p class="mt-2.5 text-sm text-slate-400 leading-relaxed">Des badges ultra-légers chargés en asynchrone. Votre score Lighthouse reste intact.</p>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="reveal card-hover group rounded-3xl border border-slate-800 bg-slate-900/50 p-7 ring-inset-highlight" style="transition-delay:.24s">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-400 group-hover:scale-110 transition-transform">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.7" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 22v-5M9 8V2M15 8V2M18 8v5a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V8Z" /></svg>
+          </div>
+          <h3 class="mt-5 font-display text-lg font-bold tracking-tight text-white">Intégration en 2 min</h3>
+          <p class="mt-2.5 text-sm text-slate-400 leading-relaxed">Copiez-collez un snippet pour Shopify ou WooCommerce. Aucune ligne de code à écrire.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PRICING ===== -->
+    <section id="tarifs" class="relative mx-auto mt-28 sm:mt-36 max-w-7xl px-4 sm:px-6 lg:px-8 scroll-mt-28">
+      <div class="reveal text-center">
+        <span class="text-xs font-semibold uppercase tracking-[0.18em] text-blue-400">Tarification</span>
+        <h2 class="mt-4 font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">Un plan pour chaque ambition</h2>
+        <p class="mt-4 text-slate-400 max-w-xl mx-auto">Commencez gratuitement, passez au niveau supérieur quand vos ventes décollent.</p>
+      </div>
+
+      <div class="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+
+        <!-- Starter -->
+        <div class="reveal card-hover flex flex-col rounded-3xl border border-slate-800 bg-slate-900/50 p-8 ring-inset-highlight">
+          <h3 class="font-display text-lg font-bold tracking-tight text-white">Starter</h3>
+          <p class="mt-1.5 text-sm text-slate-400">Pour tester et convaincre.</p>
+          <div class="mt-7 flex items-baseline gap-1.5">
+            <span class="font-display text-5xl font-bold tracking-tight text-white tabular-nums">0$</span>
+            <span class="text-slate-500">/mois</span>
+          </div>
+          <ul class="mt-8 space-y-4 text-sm text-slate-300 flex-1">
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>1 badge de confiance</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Intégration Shopify &amp; WooCommerce</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Branding BadgeBoost visible</li>
+          </ul>
+          <a href="/dashboard" class="mt-8 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/40 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-slate-800/70 hover:border-slate-600">
             Commencer gratuitement
           </a>
         </div>
 
-        <!-- PLAN PRO (15$) -->
-        <div class="relative rounded-2xl border-2 border-blue-500 bg-slate-900/90 p-8 flex flex-col justify-between shadow-2xl shadow-blue-500/10">
-          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white uppercase tracking-wider">
-            Recommandé
-          </span>
-          <div>
-            <h3 class="font-display text-xl font-bold text-white mb-2">Pro</h3>
-            <p class="text-xs text-slate-400 mb-6">Pour les e-commerçants indépendants.</p>
-            <div class="flex items-baseline gap-1 mb-6">
-              <span class="font-display text-4xl font-extrabold text-white">15$</span>
-              <span class="text-slate-400">/mois</span>
-            </div>
-            <ul class="space-y-3 text-sm text-slate-300 mb-8">
-              <li class="flex items-center gap-2">✓ Badges illimités</li>
-              <li class="flex items-center gap-2">✓ Sans filigrane BadgeBoost</li>
-              <li class="flex items-center gap-2">✓ Styles Premium (Glass & Néon)</li>
-              <li class="flex items-center gap-2">✓ Support prioritaire</li>
-            </ul>
+        <!-- Pro (subtle highlight) -->
+        <div class="reveal relative flex flex-col rounded-3xl border border-blue-500/50 bg-slate-900/60 p-8 ring-inset-highlight" style="transition-delay:.1s">
+          <div class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white">
+              <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+              Plus populaire
+            </span>
           </div>
-          <!-- LIEN STRIPE PRO -->
-          <a href="https://buy.stripe.com/test_cNi3cx4ZoekugaF9Gm9Zm00" class="block w-full text-center py-3 px-4 rounded-xl font-semibold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/25">
-            Passer à Pro (15$/mois)
+          <h3 class="font-display text-lg font-bold tracking-tight text-white">Pro</h3>
+          <p class="mt-1.5 text-sm text-slate-400">Pour les boutiques qui veulent croître.</p>
+          <div class="mt-7 flex items-baseline gap-1.5">
+            <span class="font-display text-5xl font-bold tracking-tight text-white tabular-nums">15$</span>
+            <span class="text-slate-500">/mois</span>
+          </div>
+          <ul class="mt-8 space-y-4 text-sm text-slate-300 flex-1">
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Badges illimités</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Suppression du branding</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Icônes &amp; animations exclusives</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Support prioritaire</li>
+          </ul>
+          <a href="/dashboard" class="btn-primary mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-95">
+            Essayer Pro
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" /></svg>
           </a>
         </div>
 
-        <!-- PLAN AGENCE (29$) -->
-        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between">
-          <div>
-            <h3 class="font-display text-xl font-bold text-white mb-2">Agence</h3>
-            <p class="text-xs text-slate-400 mb-6">Pour gérer plusieurs boutiques clients.</p>
-            <div class="flex items-baseline gap-1 mb-6">
-              <span class="font-display text-4xl font-extrabold text-white">29$</span>
-              <span class="text-slate-400">/mois</span>
-            </div>
-            <ul class="space-y-3 text-sm text-slate-300 mb-8">
-              <li class="flex items-center gap-2">✓ Tout ce qui est dans le plan Pro</li>
-              <li class="flex items-center gap-2">✓ Multi-domaines (Jusqu'à 10 sites)</li>
-              <li class="flex items-center gap-2">✓ Support dédié 24/7</li>
-            </ul>
+        <!-- Business -->
+        <div class="reveal card-hover flex flex-col rounded-3xl border border-slate-800 bg-slate-900/50 p-8 ring-inset-highlight" style="transition-delay:.2s">
+          <h3 class="font-display text-lg font-bold tracking-tight text-white">Business</h3>
+          <p class="mt-1.5 text-sm text-slate-400">Pour les agences et multi-boutiques.</p>
+          <div class="mt-7 flex items-baseline gap-1.5">
+            <span class="font-display text-5xl font-bold tracking-tight text-white tabular-nums">29$</span>
+            <span class="text-slate-500">/mois</span>
           </div>
-          <!-- LIEN STRIPE AGENCE -->
-          <a href="https://buy.stripe.com/test_9B6bJ31Nc90a7E905M9Zm02" class="block w-full text-center py-3 px-4 rounded-xl font-semibold bg-slate-800 text-slate-200 hover:bg-slate-700 transition-colors">
-            Rejoindre le Plan Agence
+          <ul class="mt-8 space-y-4 text-sm text-slate-300 flex-1">
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Jusqu'à 5 boutiques</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>API &amp; statistiques avancées</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Tout le plan Pro inclus</li>
+            <li class="flex items-start gap-3"><svg class="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>Onboarding dédié</li>
+          </ul>
+          <a href="/dashboard" class="mt-8 inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/40 px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-slate-800/70 hover:border-slate-600">
+            Démarrer avec mon agence
           </a>
+        </div>
+      </div>
+
+      <p class="reveal mt-8 flex flex-wrap items-center justify-center gap-2 text-center text-xs text-slate-500">
+        <svg class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+        Paiement sécurisé · Annulez à tout moment · Garantie 14 jours satisfait ou remboursé
+      </p>
+    </section>
+
+    <!-- ===== FINAL CTA ===== -->
+    <section class="relative mx-auto mt-28 sm:mt-36 max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div class="reveal relative overflow-hidden rounded-[2.5rem] border border-slate-800 bg-slate-900/50 p-10 sm:p-16 text-center ring-inset-highlight">
+        <div class="relative">
+          <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600">
+            <svg class="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          </div>
+          <h2 class="mt-6 font-display text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight">Prêt à booster <span class="text-accent">vos ventes</span> ?</h2>
+          <p class="mt-4 text-slate-400 max-w-xl mx-auto text-base sm:text-lg">Rejoignez plus de 10 000 boutiques qui convertissent davantage grâce à BadgeBoost.</p>
+          <a href="/dashboard" class="btn-primary group mt-9 inline-flex items-center gap-2.5 rounded-xl bg-blue-600 px-8 py-4 text-base font-semibold text-white transition-all hover:bg-blue-500 active:scale-95">
+            Créer mon badge gratuitement
+            <svg class="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </a>
+          <p class="mt-5 text-xs text-slate-500">Aucune carte bancaire requise · Configuration en 2 minutes</p>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="border-t border-slate-800/80 bg-[#0b0f17] py-8 text-center text-xs text-slate-500 relative z-10">
-    <p>© 2026 BadgeBoost. Tous droits réservés.</p>
+  <!-- ===== FOOTER ===== -->
+  <footer class="relative mt-24 border-t border-slate-800/70">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <a href="#top" class="flex items-center gap-2.5">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-600">
+            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2.75" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+          </span>
+          <span class="font-display text-lg font-bold tracking-tight text-white">Badge<span class="text-accent">Boost</span></span>
+        </a>
+        <nav class="flex items-center gap-6 text-sm font-medium text-slate-500">
+          <a href="#avantages" class="hover:text-white transition-colors">Avantages</a>
+          <a href="#tarifs" class="hover:text-white transition-colors">Tarifs</a>
+        </nav>
+      </div>
+      <div class="mt-10 border-t border-slate-800/70 pt-8">
+        <p class="text-sm text-slate-500">© 2026 BadgeBoost. Tous droits réservés.</p>
+      </div>
+    </div>
   </footer>
+
+  <script>
+    // ===== Mobile menu =====
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuIcon = document.getElementById('menuIcon');
+    menuBtn.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      mobileMenu.classList.toggle('hidden');
+      menuIcon.innerHTML = isOpen
+        ? '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />'
+        : '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />';
+    });
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+      menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />';
+    }));
+
+    // ===== Quantity stepper =====
+    const qtyValue = document.getElementById('qtyValue');
+    const qtyMinus = document.getElementById('qtyMinus');
+    const qtyPlus = document.getElementById('qtyPlus');
+    let qty = 1;
+    qtyMinus.addEventListener('click', () => {
+      if (qty > 1) { qty--; qtyValue.textContent = qty; }
+    });
+    qtyPlus.addEventListener('click', () => {
+      qty++; qtyValue.textContent = qty;
+    });
+
+    // ===== Badge templates (SVG icons) =====
+    const iconLock = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>';
+    const iconTruck = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>';
+    const iconShield = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1v7Z" /></svg>';
+    const iconCheck = '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2.6" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>';
+
+    const animOn = 'animate-float';
+    let animationsEnabled = true;
+
+    const templates = {
+      glass: () => `
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div class="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">${iconLock}</div>
+            <p class="mt-2.5 text-[13px] font-semibold text-white">Paiement 100% Sécurisé</p>
+            <p class="text-[11px] text-slate-500">SSL 256-bit & 3D Secure</p>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">${iconTruck}</div>
+            <p class="mt-2.5 text-[13px] font-semibold text-white">Livraison 24/48h</p>
+            <p class="text-[11px] text-slate-500">Suivi en temps réel</p>
+          </div>
+          <div class="rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500/10 text-sky-400">${iconShield}</div>
+            <p class="mt-2.5 text-[13px] font-semibold text-white">Satisfait ou Remboursé</p>
+            <p class="text-[11px] text-slate-500">Garantie 30 jours</p>
+          </div>
+        </div>`,
+      neon: () => `
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          <div class="rounded-xl p-[1px] bg-gradient-to-br from-emerald-500/60 to-teal-500/60">
+            <div class="flex items-center gap-3 rounded-[11px] bg-slate-900 px-4 py-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400">${iconLock}</div>
+              <div class="flex-1">
+                <p class="text-[13px] font-semibold text-white">Paiement 100% Sécurisé</p>
+                <p class="text-[11px] text-slate-500">SSL 256-bit & 3D Secure</p>
+              </div>
+              <span class="text-emerald-400">${iconCheck}</span>
+            </div>
+          </div>
+          <div class="rounded-xl p-[1px] bg-gradient-to-br from-blue-500/60 to-indigo-500/60">
+            <div class="flex items-center gap-3 rounded-[11px] bg-slate-900 px-4 py-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">${iconTruck}</div>
+              <div class="flex-1">
+                <p class="text-[13px] font-semibold text-white">Livraison 24/48h</p>
+                <p class="text-[11px] text-slate-500">Suivi en temps réel</p>
+              </div>
+              <span class="text-blue-400">${iconCheck}</span>
+            </div>
+          </div>
+          <div class="rounded-xl p-[1px] bg-gradient-to-br from-sky-500/60 to-cyan-500/60">
+            <div class="flex items-center gap-3 rounded-[11px] bg-slate-900 px-4 py-3">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-500/10 text-sky-400">${iconShield}</div>
+              <div class="flex-1">
+                <p class="text-[13px] font-semibold text-white">Satisfait ou Remboursé</p>
+                <p class="text-[11px] text-slate-500">Garantie 30 jours</p>
+              </div>
+              <span class="text-sky-400">${iconCheck}</span>
+            </div>
+          </div>
+        </div>`,
+      minimal: () => `
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 divide-y divide-slate-800/70 overflow-hidden">
+          <div class="flex items-center gap-3 px-4 py-3">
+            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">${iconCheck}</span>
+            <span class="text-[13px] text-slate-300"><span class="font-semibold text-white">Paiement 100% Sécurisé</span> — SSL 256-bit & 3D Secure</span>
+          </div>
+          <div class="flex items-center gap-3 px-4 py-3">
+            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-blue-400">${iconCheck}</span>
+            <span class="text-[13px] text-slate-300"><span class="font-semibold text-white">Livraison 24/48h</span> — Suivi en temps réel</span>
+          </div>
+          <div class="flex items-center gap-3 px-4 py-3">
+            <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sky-500/10 text-sky-400">${iconCheck}</span>
+            <span class="text-[13px] text-slate-300"><span class="font-semibold text-white">Satisfait ou Remboursé</span> — Garantie 30 jours</span>
+          </div>
+        </div>`,
+    };
+
+    const badgeContainer = document.getElementById('badgeContainer');
+
+    function renderBadges(style, animate) {
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = templates[style]();
+      if (animate) {
+        wrapper.querySelectorAll('.rounded-xl').forEach(el => {
+          el.classList.add(animOn);
+          el.style.animationDelay = (Math.random() * 0.5) + 's';
+        });
+      }
+      badgeContainer.innerHTML = wrapper.innerHTML;
+    }
+
+    renderBadges('glass', true);
+
+    // Style switcher
+    const styleBtns = document.querySelectorAll('.styleBtn');
+    styleBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        styleBtns.forEach(b => {
+          b.classList.remove('bg-blue-600', 'text-white', 'font-semibold');
+          b.classList.add('text-slate-400', 'font-medium', 'hover:text-white');
+        });
+        btn.classList.add('bg-blue-600', 'text-white', 'font-semibold');
+        btn.classList.remove('text-slate-400', 'font-medium');
+        renderBadges(btn.dataset.style, animationsEnabled);
+      });
+    });
+
+    // Animation toggle
+    const animToggle = document.getElementById('animToggle');
+    const animDot = document.getElementById('animDot');
+    const animLabel = document.getElementById('animLabel');
+    animToggle.addEventListener('click', () => {
+      animationsEnabled = !animationsEnabled;
+      const activeStyle = document.querySelector('.styleBtn.bg-blue-600')?.dataset.style || 'glass';
+      if (animationsEnabled) {
+        animDot.className = 'h-2 w-2 rounded-full bg-emerald-400';
+        animLabel.textContent = 'Activées';
+        animLabel.className = 'text-emerald-400';
+      } else {
+        animDot.className = 'h-2 w-2 rounded-full bg-slate-500';
+        animLabel.textContent = 'Désactivées';
+        animLabel.className = 'text-slate-500';
+      }
+      renderBadges(activeStyle, animationsEnabled);
+    });
+
+    // ===== Scroll reveal =====
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
