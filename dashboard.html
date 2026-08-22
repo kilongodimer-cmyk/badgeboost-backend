@@ -520,3 +520,20 @@
     }
   }
 </script>
+
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get('plan');
+    const badge = document.getElementById('plan-badge');
+
+    if (badge && plan) {
+        if (plan === 'pro') {
+            badge.className = 'inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-medium text-emerald-300';
+            badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span></span> ⚡ Plan Pro — 15$/mois';
+        } else if (plan === 'business') {
+            badge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
+            badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span> 🚀 Plan Business — 29$/mois';
+        }
+    }
+</script>
