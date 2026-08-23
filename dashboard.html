@@ -164,25 +164,38 @@
         <div class="mt-6">
           <div class="flex items-center justify-between">
             <span class="block text-sm font-medium text-slate-300">Couleur principale</span>
-            <span id="colorLockHint" class="hidden text-[11px] font-medium text-slate-500">Palette fixe · plan Starter</span>
+            <span id="colorLockHint" class="hidden inline-flex items-center gap-1 text-[11px] font-medium text-amber-400/80">
+              <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M8 10.5V7a4 4 0 1 1 8 0v3.5"/></svg>
+              Réservé aux plans Pro &amp; Business
+            </span>
           </div>
-          <div class="mt-3 flex flex-wrap items-center gap-3">
-            <input id="badgeColor" type="color" value="#10b981" aria-label="Couleur principale" />
-            <span id="colorHex" class="font-mono text-xs text-slate-500">#10b981</span>
+
+          <!-- Contrôles de couleur (masqués sur le plan Starter) -->
+          <div id="colorControls">
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+              <input id="badgeColor" type="color" value="#10b981" aria-label="Couleur principale" />
+              <span id="colorHex" class="font-mono text-xs text-slate-500">#10b981</span>
+            </div>
+            <div id="presetWrap" class="mt-3 flex flex-wrap items-center gap-2.5">
+              <button data-color="#10b981" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
+                <span class="h-4 w-4 rounded-full" style="background:#10b981"></span>Émeraude
+              </button>
+              <button data-color="#3b82f6" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
+                <span class="h-4 w-4 rounded-full" style="background:#3b82f6"></span>Bleu
+              </button>
+              <button data-color="#64748b" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
+                <span class="h-4 w-4 rounded-full" style="background:#64748b"></span>Sombre
+              </button>
+              <button data-color="#8b5cf6" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
+                <span class="h-4 w-4 rounded-full" style="background:#8b5cf6"></span>Violet
+              </button>
+            </div>
           </div>
-          <div id="presetWrap" class="mt-3 flex flex-wrap items-center gap-2.5">
-            <button data-color="#10b981" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
-              <span class="h-4 w-4 rounded-full" style="background:#10b981"></span>Émeraude
-            </button>
-            <button data-color="#3b82f6" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
-              <span class="h-4 w-4 rounded-full" style="background:#3b82f6"></span>Bleu
-            </button>
-            <button data-color="#64748b" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
-              <span class="h-4 w-4 rounded-full" style="background:#64748b"></span>Sombre
-            </button>
-            <button data-color="#8b5cf6" class="presetBtn flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition-all hover:border-slate-700">
-              <span class="h-4 w-4 rounded-full" style="background:#8b5cf6"></span>Violet
-            </button>
+
+          <!-- Aperçu de la couleur fixe (affiché uniquement sur le plan Starter) -->
+          <div id="colorFixedNote" class="hidden mt-3 flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2.5">
+            <span class="h-5 w-5 shrink-0 rounded-full ring-1 ring-white/10" style="background:#10b981"></span>
+            <p class="text-[12px] text-slate-400">Couleur fixe <span class="font-mono text-slate-300">#10b981</span> · La personnalisation des couleurs est réservée aux plans <span class="font-medium text-slate-200">Pro</span> et <span class="font-medium text-slate-200">Business</span>.</p>
           </div>
         </div>
 
@@ -239,9 +252,10 @@
         <!-- Sélecteur de plateforme (de base) -->
         <div id="platformBar" class="mt-6 flex items-center gap-1 rounded-xl border border-slate-800 bg-slate-900/60 p-1">
           <button data-platform="shopify" class="platformTab flex-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-all hover:text-white">Shopify</button>
-          <button data-platform="woocommerce" class="platformTab flex-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-all hover:text-white">WooCommerce</button>
-          <button data-platform="html" class="platformTab flex-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-all hover:text-white">HTML</button>
+          <button data-platform="woocommerce" data-secondary="1" class="platformTab flex-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-all hover:text-white">WooCommerce</button>
+          <button data-platform="html" data-secondary="1" class="platformTab flex-1 rounded-lg px-3 py-2 text-sm font-medium text-slate-400 transition-all hover:text-white">HTML</button>
         </div>
+        <p id="platformStarterHint" class="mt-2 hidden text-[11px] text-amber-400/80">Le plan Starter intègre uniquement Shopify. WooCommerce, HTML et plus sont réservés aux plans Pro &amp; Business.</p>
 
         <!-- Zone plateformes avancées (Business) — injectée dynamiquement -->
         <div id="advancedPlatforms" class="hidden mt-3">
@@ -428,9 +442,9 @@
     // ============================================================
     function renderPreview() {
       const text = escapeHtml(textInput.value.trim() || defaultText);
-      // Les styles exclusifs imposent leur propre couleur d'accent ; sinon on prend la couleur choisie.
+      // Plan Starter -> couleur fixe ; styles exclusifs -> accent du style ; sinon couleur choisie.
       const ex = EXCLUSIVE_STYLES[currentStyle];
-      const color = ex ? ex.accent : colorInput.value;
+      const color = isStarter ? FIXED_COLOR : (ex ? ex.accent : colorInput.value);
       let html = '';
 
       if (ex) {
@@ -488,8 +502,15 @@
     // ============================================================
     //  3. GÉNÉRATION DU CODE
     // ============================================================
-    // Couleur effective : les styles exclusifs imposent leur accent, sinon la couleur choisie.
+    // Couleur fixe imposée au plan Starter (aucune personnalisation possible).
+    const FIXED_COLOR = '#10b981';
+
+    // Couleur effective :
+    //  - plan Starter  -> couleur fixe unique (#10b981) ;
+    //  - style exclusif -> accent du style ;
+    //  - sinon          -> couleur choisie par l'utilisateur.
     function effectiveColor() {
+      if (isStarter) return FIXED_COLOR;
       const ex = EXCLUSIVE_STYLES[currentStyle];
       return ex ? ex.accent : colorInput.value;
     }
@@ -513,13 +534,8 @@
     }
 
     function renderCode() {
-      // Sur le plan Starter, le code reste verrouillé : on n'affiche rien de copiable.
-      if (isStarter) {
-        codeEl.innerHTML =
-          '<span class="text-red-400">/* Code d\'intégration verrouillé — plan Starter. */</span>\n' +
-          '<span class="text-red-400/70">/* Passez au plan Pro ou Business pour débloquer votre snippet. */</span>';
-        return;
-      }
+      // Le plan Starter génère un code d'intégration Shopify pleinement fonctionnel
+      // (plateforme unique + couleur fixe). Aucun verrouillage.
       const p = platforms[currentPlatform];
       const text = escapeHtml(textInput.value.trim() || defaultText);
       const lines = [
@@ -693,13 +709,19 @@
         else { conf.off.forEach(function (c) { a.classList.add(c); }); a.removeAttribute('aria-current'); }
       });
 
-      // --- Restrictions STARTER ---
+      // --- Restrictions STARTER (moins bloquantes) ---
       if (isStarter) {
-        // a) Sélecteur de couleur grisé & désactivé
-        colorInput.disabled = true;
+        // a) Couleur unique fixe : on masque totalement les contrôles de couleur
+        //    et on affiche l'aperçu de la couleur fixe + le message d'information.
+        const colorControls = document.getElementById('colorControls');
+        const colorFixedNote = document.getElementById('colorFixedNote');
+        if (colorControls) colorControls.classList.add('hidden');
+        if (colorFixedNote) colorFixedNote.classList.remove('hidden');
         colorLockHint.classList.remove('hidden');
+        colorInput.disabled = true;
+        colorInput.value = FIXED_COLOR; // garantit la couleur fixe pour tout rendu
 
-        // b) Style Néon désactivé
+        // b) Style Néon désactivé (conservé)
         const neonBtn = document.querySelector('.styleBtn[data-style="neon"]');
         if (neonBtn) {
           neonBtn.classList.add('is-locked');
@@ -708,13 +730,20 @@
         }
         neonHint.classList.remove('hidden');
 
-        // c) Bloc de code verrouillé + bannière rouge
-        lockBanner.classList.remove('hidden');
+        // c) Plateforme unique = Shopify : on masque les onglets secondaires
+        //    et on force la plateforme active sur Shopify.
+        document.querySelectorAll('#platformBar .platformTab[data-secondary="1"]').forEach(function (b) {
+          b.classList.add('hidden');
+        });
+        var shopifyTab = document.querySelector('#platformBar .platformTab[data-platform="shopify"]');
+        if (shopifyTab) shopifyTab.classList.remove('flex-1'); // évite l'étirement quand seul
+        document.getElementById('platformStarterHint').classList.remove('hidden');
+        document.getElementById('integrationSub').textContent = 'Intégration Shopify (plan Starter).';
+        currentPlatform = 'shopify';
 
-        // d) Bouton copier transformé en appel à l'action
-        copyBtn.classList.remove('bg-blue-600', 'hover:bg-blue-500');
-        copyBtn.classList.add('bg-slate-700', 'hover:bg-slate-600');
-        copyLabel.textContent = 'Passez à Pro pour copier le code';
+        // d) Le code d'intégration Shopify reste disponible et copiable :
+        //    aucune bannière de verrouillage, bouton copier standard.
+        lockBanner.classList.add('hidden');
       }
 
       // --- Déblocage BUSINESS ---
@@ -755,17 +784,15 @@
     });
 
     document.querySelectorAll('#platformBar .platformTab').forEach((b) => {
-      b.addEventListener('click', () => setActivePlatform(b.dataset.platform));
+      b.addEventListener('click', () => {
+        // Sur Starter, seuls Shopify est sélectionnable (les autres sont masqués).
+        if (isStarter && b.dataset.platform !== 'shopify') return;
+        setActivePlatform(b.dataset.platform);
+      });
     });
 
     // ===== Copier =====
     copyBtn.addEventListener('click', async () => {
-      // Verrou Starter : pas d'export
-      if (isStarter) {
-        lockBanner.classList.remove('hidden');
-        lockBanner.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
-      }
       const code = generateCode();
       try {
         await navigator.clipboard.writeText(code);
