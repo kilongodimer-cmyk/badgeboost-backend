@@ -115,23 +115,28 @@
       <p class="mt-1.5 text-sm text-slate-400">Personnalisez le texte, la couleur et le style — l'aperçu et le code se mettent à jour en temps réel.</p>
     </div>
 
-    <!-- ===== SÉLECTEUR DE PLAN (tunnel de test / simulation d'achat) ===== -->
+    <!-- ===== SÉLECTEUR DE PLAN (Starter local · Pro/Business → paiement Stripe) ===== -->
     <div class="mb-8 rounded-2xl border border-slate-800/80 bg-slate-900/50 p-4 sm:p-5 ring-inset-highlight">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 class="text-sm font-semibold text-white">Votre abonnement</h2>
-          <p class="mt-0.5 text-[13px] text-slate-500">Simulez un plan pour tester les fonctionnalités débloquées.</p>
+          <p class="mt-0.5 text-[13px] text-slate-500">Passez à un plan supérieur pour débloquer plus de fonctionnalités.</p>
         </div>
         <div id="planSwitcher" class="grid grid-cols-3 gap-1.5 rounded-xl border border-slate-800 bg-slate-950/60 p-1 sm:w-auto">
+          <!-- Starter : reste sur le plan gratuit (redirection locale, sans paiement) -->
           <a href="?plan=starter" data-plan="starter" class="planSwitchBtn flex flex-col items-center rounded-lg px-4 py-2 text-center transition-all">
             <span class="text-sm font-semibold">Starter</span>
             <span class="text-[11px] opacity-70">Gratuit</span>
           </a>
-          <a href="?plan=pro" data-plan="pro" class="planSwitchBtn flex flex-col items-center rounded-lg px-4 py-2 text-center transition-all">
+          <!-- Pro : redirection vers le tunnel de paiement Stripe -->
+          <a href="https://buy.stripe.com/PRO_LINK_PLACEHOLDER" data-plan="pro" data-checkout="pro"
+             class="planSwitchBtn flex flex-col items-center rounded-lg px-4 py-2 text-center transition-all">
             <span class="text-sm font-semibold">Pro</span>
             <span class="text-[11px] opacity-70">15$/mois</span>
           </a>
-          <a href="?plan=business" data-plan="business" class="planSwitchBtn flex flex-col items-center rounded-lg px-4 py-2 text-center transition-all">
+          <!-- Business : redirection vers le tunnel de paiement Stripe -->
+          <a href="https://buy.stripe.com/BUSINESS_LINK_PLACEHOLDER" data-plan="business" data-checkout="business"
+             class="planSwitchBtn flex flex-col items-center rounded-lg px-4 py-2 text-center transition-all">
             <span class="text-sm font-semibold">Business</span>
             <span class="text-[11px] opacity-70">29$/mois</span>
           </a>
@@ -335,6 +340,25 @@
   <script>
   (function () {
     'use strict';
+
+    // ============================================================
+    //  0. LIENS DE PAIEMENT STRIPE
+    //     Remplacez ces URL par vos vrais liens Stripe.
+    //     (Elles sont aussi présentes en dur dans les href des boutons ;
+    //      ce bloc les resynchronise automatiquement au chargement.)
+    // ============================================================
+    const STRIPE_LINKS = {
+      pro: 'https://buy.stripe.com/PRO_LINK_PLACEHOLDER',
+      business: 'https://buy.stripe.com/BUSINESS_LINK_PLACEHOLDER',
+    };
+    // Applique/re-synchronise les liens Stripe sur les boutons d'abonnement.
+    document.querySelectorAll('.planSwitchBtn[data-checkout]').forEach(function (a) {
+      var key = a.dataset.checkout;
+      if (STRIPE_LINKS[key]) {
+        a.setAttribute('href', STRIPE_LINKS[key]);
+        a.setAttribute('rel', 'noopener');
+      }
+    });
 
     // ============================================================
     //  1. DÉTECTION DU PLAN VIA L'URL (?plan=starter|pro|business)
