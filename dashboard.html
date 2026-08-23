@@ -602,7 +602,62 @@
     });
 </script>
    
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = (urlParams.get('plan') || 'starter').toLowerCase();
+        const badge = document.getElementById('plan-badge');
 
+        if (badge) {
+            if (plan === 'pro') {
+                badge.className = 'inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300';
+                badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span> Plan Pro — 15$/mois';
+            } else if (plan === 'business') {
+                badge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
+                badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span> Plan Business — 29$/mois';
+            }
+        }
+
+        const neonBtn = document.querySelector('button[data-style="neon"]');
+        const copyBtn = document.getElementById('copyBtn');
+        const codeContent = document.getElementById('codeContent');
+
+        if (plan === 'starter') {
+            if (neonBtn) {
+                neonBtn.style.opacity = '0.3';
+                neonBtn.style.filter = 'grayscale(100%)';
+                neonBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    alert("Restriction Plan Starter : Le style Neon est reserve aux plans Pro et Business.");
+                }, true);
+            }
+
+            if (codeContent) {
+                codeContent.innerText = "// Code d'integration verrouille sur le plan Gratuit.\n// Passez au plan Pro ou Business pour recuperer votre code HTML/Shopify.";
+                codeContent.style.color = '#ef4444';
+            }
+
+            if (copyBtn) {
+                copyBtn.style.backgroundColor = '#334155';
+                copyBtn.innerText = "Passez a Pro pour copier le code";
+                copyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    alert("L'export du code est reserve aux membres Pro et Business.");
+                }, true);
+            }
+        } else {
+            if (neonBtn) {
+                neonBtn.style.opacity = '1';
+                neonBtn.style.filter = 'none';
+            }
+            if (copyBtn) {
+                copyBtn.style.backgroundColor = plan === 'business' ? '#8b5cf6' : '#2563eb';
+            }
+        }
+    });
+</script>
   
 </body>
 </html>
