@@ -559,6 +559,48 @@
         }
     }
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = (urlParams.get('plan') || 'starter').toLowerCase();
+        const badge = document.getElementById('plan-badge');
+
+        // 1. Mise à jour du badge dans le header
+        if (badge) {
+            if (plan === 'pro') {
+                badge.className = 'inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300';
+                badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span>  Plan Pro — 15$/mois';
+            } else if (plan === 'business') {
+                badge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
+                badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span>  Plan Business — 29$/mois';
+            }
+        }
+
+        // 2. Gestion des limitations (Plan Gratuit) vs Améliorations (Plans Payants)
+        const neonBtn = document.querySelector('button[data-style="neon"]');
+        
+        if (plan === 'starter') {
+            // RESTRICTION PLAN GRATUIT : Bloquer le style Néon par exemple
+            if (neonBtn) {
+                neonBtn.style.opacity = '0.4';
+                neonBtn.title = "Réservé aux membres Pro et Business";
+                neonBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    alert(" Le style Néon est réservé aux plans Pro et Business. Passez à la vitesse supérieure pour le débloquer !");
+                }, true);
+            }
+        } else {
+            // AMÉLIORATION PLANS PAYANTS (Pro ou Business) : Accès VIP total
+            console.log(`Accès VIP débloqué pour le plan : ${plan}`);
+            if (neonBtn) {
+                neonBtn.style.opacity = '1';
+                neonBtn.style.borderColor = plan === 'business' ? '#8b5cf6' : '#3b82f6';
+            }
+        }
+    });
+</script>
   
 
   
