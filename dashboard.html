@@ -667,6 +667,67 @@
     });
 </script>
   
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = (urlParams.get('plan') || 'starter').toLowerCase();
+        
+        const badgeText = document.getElementById('plan-badge-text');
+        if (badgeText) {
+            if (plan === 'pro') badgeText.innerText = "Plan Pro — 15$/mois";
+            else if (plan === 'business') badgeText.innerText = "Plan Business — 29$/mois";
+            else badgeText.innerText = "Plan Starter — Gratuit";
+        }
+
+        const colorInput = document.getElementById('badgeColor');
+        const neonBtn = document.querySelector('button[data-style="neon"]');
+        const codeBlock = document.getElementById('codeContent');
+        const copyBtn = document.getElementById('copyBtn');
+
+        if (plan === 'starter') {
+            // Restriction couleur infinie : désactivation du sélecteur libre
+            if (colorInput) {
+                colorInput.disabled = true;
+                colorInput.style.opacity = '0.3';
+                colorInput.style.cursor = 'not-allowed';
+            }
+
+            // Désactivation du style Neon
+            if (neonBtn) {
+                neonBtn.style.opacity = '0.2';
+                neonBtn.style.pointerEvents = 'none';
+            }
+
+            // Verrouillage du code
+            if (codeBlock) {
+                codeBlock.innerText = "/* Code d'integration reserve aux abonnements Pro et Business. */";
+                codeBlock.style.color = "#ef4444";
+            }
+
+            if (copyBtn) {
+                copyBtn.style.backgroundColor = '#334155';
+                copyBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    alert("L'export du code necessite un plan Pro ou Business.");
+                }, true);
+            }
+        } else {
+            // Déblocage total pour Pro et Business (Couleurs à l'infini + styles)
+            if (colorInput) {
+                colorInput.disabled = false;
+                colorInput.style.opacity = '1';
+                colorInput.style.cursor = 'pointer';
+            }
+            if (neonBtn) {
+                neonBtn.style.opacity = '1';
+                neonBtn.style.pointerEvents = 'auto';
+            }
+        }
+    });
+</script>
+
+
   
 </body>
 </html>
