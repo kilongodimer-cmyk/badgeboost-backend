@@ -792,6 +792,56 @@
     });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const plan = (urlParams.get('plan') || 'starter').toLowerCase();
+
+        // Harmonisation du sélecteur de couleur
+        const colorInput = document.getElementById('badgeColor');
+        if (colorInput) {
+            colorInput.style.backgroundColor = '#1e293b';
+            colorInput.style.borderColor = '#334155';
+        }
+
+        // Restrictions Plan Starter
+        if (plan === 'starter') {
+            if (colorInput) {
+                colorInput.disabled = true;
+                colorInput.style.opacity = '0.3';
+                colorInput.style.cursor = 'not-allowed';
+            }
+            const neonBtn = document.querySelector('button[data-style="neon"]');
+            if (neonBtn) {
+                neonBtn.style.opacity = '0.2';
+                neonBtn.style.pointerEvents = 'none';
+            }
+            const codeBlock = document.getElementById('codeContent');
+            if (codeBlock) {
+                codeBlock.innerText = "/* Code d'intégration réservé aux abonnements Pro et Business. */";
+                codeBlock.style.color = '#ef4444';
+            }
+        } 
+        // Plan Business : Déblocage de la personnalisation infinie des intégrations
+        else if (plan === 'business') {
+            const platformTabs = document.querySelectorAll('.platformTab');
+            platformTabs.forEach(tab => {
+                // On active une bordure lumineuse violette pour signifier le mode Business illimité
+                tab.style.borderColor = '#a855f7';
+                tab.style.backgroundColor = 'rgba(168, 85, 247, 0.1)';
+            });
+
+            // Personnalisation dynamique du bloc de code pour refléter l'accès illimité Business
+            const codeBlock = document.getElementById('codeContent');
+            if (codeBlock && !codeBlock.innerText.includes('Business')) {
+                codeBlock.innerText = "/* Mode Business Actif : Intégration multi-plateforme et personnalisation infinie débloquées */\n" + codeBlock.innerText;
+            }
+        }
+    });
+</script>
+
+  
+
   
 </body>
 </html>
