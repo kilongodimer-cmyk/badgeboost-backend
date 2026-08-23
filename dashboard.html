@@ -92,14 +92,14 @@
           <span class="font-display text-lg font-bold tracking-tight text-white">Badge<span class="text-accent">Boost</span></span>
         </a>
 
-        <!-- Status badge (seulement) -->
-        <span class="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-medium text-emerald-300">
-          <span class="relative flex h-2 w-2">
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
-            <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-          </span>
-          Plan Starter — Gratuit
-        </span>
+      <!-- Status badge -->
+<span id="plan-badge" class="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-medium text-emerald-300">
+    <span class="relative flex h-2 w-2">
+        <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span>
+        <span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+    </span>
+    Plan Starter — Gratuit
+</span>
       </div>
     </div>
   </header>
@@ -496,31 +496,52 @@
     }
   }
 </script>
-  
-</body>
-</html>
-
-
 
 <script>
-  // Gestion dynamique du plan selon l'URL (?plan=pro ou ?plan=business)
-  const urlParams = new URLSearchParams(window.location.search);
-  const plan = urlParams.get('plan');
-  
-  // On cible le badge dans le header
-  const badge = document.querySelector('header span.inline-flex');
+    // Récupération directe du paramètre plan dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get('plan');
+    
+    // On cible directement le span du badge dans le header
+    const headerBadge = document.querySelector('header span.inline-flex');
 
-  if (badge && plan) {
-    if (plan.toLowerCase() === 'pro') {
-      badge.className = 'inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300';
-      badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span> ⚡ Plan Pro — 15$/mois';
-    } else if (plan.toLowerCase() === 'business') {
-      badge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
-      badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span> 🚀 Plan Business — 29$/mois';
+    if (headerBadge && plan) {
+        if (plan === 'pro') {
+            headerBadge.className = 'inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300';
+            headerBadge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span> ⚡ Plan Pro — 15$/mois';
+        } else if (plan === 'business') {
+            headerBadge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
+            headerBadge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span> 🚀 Plan Business — 29$/mois';
+        }
     }
-  }
 </script>
 
+<script>
+    // Gestion dynamique du plan selon l'URL (?plan=pro ou ?plan=business)
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get('plan');
+    
+    // On cible précisément le badge du header par son contenu d'origine
+    const badges = document.querySelectorAll('header span');
+    let planBadge = null;
+    
+    badges.forEach(el => {
+        if (el.textContent.includes('Plan Starter') || el.textContent.includes('Plan Pro') || el.textContent.includes('Plan Business')) {
+            planBadge = el;
+        }
+    });
+
+    if (planBadge && plan) {
+        const p = plan.toLowerCase();
+        if (p === 'pro') {
+            planBadge.className = 'inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300';
+            planBadge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span> ⚡ Plan Pro — 15$/mois';
+        } else if (p === 'business') {
+            planBadge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
+            planBadge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span> 🚀 Plan Business — 29$/mois';
+        }
+    }
+</script>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
@@ -528,12 +549,21 @@
     const badge = document.getElementById('plan-badge');
 
     if (badge && plan) {
-        if (plan === 'pro') {
-            badge.className = 'inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-medium text-emerald-300';
-            badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-emerald-400"></span></span> ⚡ Plan Pro — 15$/mois';
-        } else if (plan === 'business') {
+        const p = plan.toLowerCase();
+        if (p === 'pro') {
+            badge.className = 'inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300';
+            badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-blue-400"></span></span> ⚡ Plan Pro — 15$/mois';
+        } else if (p === 'business') {
             badge.className = 'inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3.5 py-1.5 text-xs font-medium text-purple-300';
             badge.innerHTML = '<span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-purple-400"></span></span> 🚀 Plan Business — 29$/mois';
         }
     }
 </script>
+  
+
+  
+</body>
+</html>
+
+
+
