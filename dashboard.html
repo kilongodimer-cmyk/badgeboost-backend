@@ -727,68 +727,32 @@
     });
 </script>
 
-
-  <script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const plan = (urlParams.get('plan') || 'starter').toLowerCase();
-        
-        const badgeText = document.getElementById('plan-badge-text');
-        if (badgeText) {
-            if (plan === 'pro') badgeText.innerText = "Plan Pro — 15$/mois";
-            else if (plan === 'business') badgeText.innerText = "Plan Business — 29$/mois";
-            else badgeText.innerText = "Plan Starter — Gratuit";
+
+        // Harmonisation du sélecteur de couleur avec le thème sombre du site
+        const colorInput = document.getElementById('badgeColor');
+        if (colorInput) {
+            colorInput.style.backgroundColor = '#1e293b';
+            colorInput.style.borderColor = '#334155';
         }
 
-        const colorInput = document.getElementById('badgeColor');
-        const neonBtn = document.querySelector('button[data-style="neon"]');
-        const codeBlock = document.getElementById('codeContent');
-        const copyBtn = document.getElementById('copyBtn');
-
-        if (plan === 'starter') {
-            if (colorInput) {
-                colorInput.disabled = true;
-                colorInput.style.opacity = '0.3';
-                colorInput.style.cursor = 'not-allowed';
-            }
-            if (neonBtn) {
-                neonBtn.style.opacity = '0.2';
-                neonBtn.style.pointerEvents = 'none';
-            }
-            if (codeBlock) {
-                codeBlock.innerText = "/* Code d'integration reserve aux abonnements Pro et Business. */";
-                codeBlock.style.color = '#ef4444';
-            }
-            if (copyBtn) {
-                copyBtn.style.backgroundColor = '#334155';
-                copyBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopImmediatePropagation();
-                    alert("L'export du code necessite un plan Pro ou Business.");
-                }, true);
-            }
-        } else if (plan === 'business') {
-            // Plan Business : Couleurs à l'infini + Intégration multi-plateformes infinie
-            if (colorInput) {
-                colorInput.disabled = false;
-                colorInput.style.opacity = '1';
-                colorInput.style.cursor = 'pointer';
-            }
-            if (neonBtn) {
-                neonBtn.style.opacity = '1';
-                neonBtn.style.pointerEvents = 'auto';
-            }
-            if (codeBlock) {
-                codeBlock.innerText = "/* Plan Business : Integration universelle active (Shopify, WooCommerce, PrestaShop, Wix, SDK Sur-mesure) */\n" + codeBlock.innerText;
-            }
-        } else {
-            if (colorInput) {
-                colorInput.disabled = false;
-                colorInput.style.opacity = '1';
-            }
-            if (neonBtn) {
-                neonBtn.style.opacity = '1';
-                neonBtn.style.pointerEvents = 'auto';
+        // Gestion spécifique pour le Plan Business : Variété infinie de styles d'intégration
+        if (plan === 'business') {
+            const platformContainer = document.querySelector('button[data-platform="html"]').parentElement;
+            if (platformContainer && !document.getElementById('infinite-platforms')) {
+                const extraPlatformsDiv = document.createElement('div');
+                extraPlatformsDiv.id = 'infinite-platforms';
+                extraPlatformsDiv.className = 'mt-2 flex flex-wrap items-center gap-1.5';
+                extraPlatformsDiv.innerHTML = `
+                    <button data-platform="prestashop" class="platformTab flex-1 rounded-lg px-3 py-2 text-xs font-medium text-purple-300 bg-purple-500/10 border border-purple-500/30 transition-all hover:bg-purple-500/20">PrestaShop</button>
+                    <button data-platform="wix" class="platformTab flex-1 rounded-lg px-3 py-2 text-xs font-medium text-purple-300 bg-purple-500/10 border border-purple-500/30 transition-all hover:bg-purple-500/20">Wix</button>
+                    <button data-platform="magento" class="platformTab flex-1 rounded-lg px-3 py-2 text-xs font-medium text-purple-300 bg-purple-500/10 border border-purple-500/30 transition-all hover:bg-purple-500/20">Magento</button>
+                    <button data-platform="sdk" class="platformTab flex-1 rounded-lg px-3 py-2 text-xs font-medium text-purple-300 bg-purple-500/10 border border-purple-500/30 transition-all hover:bg-purple-500/20">SDK Universel</button>
+                `;
+                platformContainer.appendChild(extraPlatformsDiv);
             }
         }
     });
