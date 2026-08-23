@@ -732,16 +732,34 @@
         const urlParams = new URLSearchParams(window.location.search);
         const plan = (urlParams.get('plan') || 'starter').toLowerCase();
 
-        // Harmonisation du sélecteur de couleur avec le thème sombre du site
+        // 1. Harmonisation du sélecteur de couleur
         const colorInput = document.getElementById('badgeColor');
         if (colorInput) {
             colorInput.style.backgroundColor = '#1e293b';
             colorInput.style.borderColor = '#334155';
         }
 
-        // Gestion spécifique pour le Plan Business : Variété infinie de styles d'intégration
-        if (plan === 'business') {
-            const platformContainer = document.querySelector('button[data-platform="html"]').parentElement;
+        // 2. Gestion des restrictions pour le plan Starter
+        if (plan === 'starter') {
+            if (colorInput) {
+                colorInput.disabled = true;
+                colorInput.style.opacity = '0.3';
+                colorInput.style.cursor = 'not-allowed';
+            }
+            const neonBtn = document.querySelector('button[data-style="neon"]');
+            if (neonBtn) {
+                neonBtn.style.opacity = '0.2';
+                neonBtn.style.pointerEvents = 'none';
+            }
+            const codeBlock = document.getElementById('codeContent');
+            if (codeBlock) {
+                codeBlock.innerText = "/* Code d'intégration réservé aux abonnements Pro et Business. */";
+                codeBlock.style.color = '#ef4444';
+            }
+        } 
+        // 3. Plan Business : Ajout de la variété infinie de styles d'intégration
+        else if (plan === 'business') {
+            const platformContainer = document.querySelector('button[data-platform="html"]')?.parentElement;
             if (platformContainer && !document.getElementById('infinite-platforms')) {
                 const extraPlatformsDiv = document.createElement('div');
                 extraPlatformsDiv.id = 'infinite-platforms';
@@ -753,6 +771,22 @@
                     <button data-platform="sdk" class="platformTab flex-1 rounded-lg px-3 py-2 text-xs font-medium text-purple-300 bg-purple-500/10 border border-purple-500/30 transition-all hover:bg-purple-500/20">SDK Universel</button>
                 `;
                 platformContainer.appendChild(extraPlatformsDiv);
+
+                // Rendre les nouveaux boutons interactifs pour qu'ils modifient le bloc de code
+                const codeContent = document.getElementById('codeContent');
+                const fileName = document.getElementById('fileName');
+                const stepTwo = document.getElementById('stepTwo');
+
+                document.querySelectorAll('#infinite-platforms button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const plat = btn.getAttribute('data-platform');
+                        if (codeContent) {
+                            codeContent.innerText = `/* Integration ${plat.toUpperCase()} - Plan Business */\nwindow.BadgeBoostConfig = {\n    text: document.getElementById('badgeText').value,\n    platform: "${plat}"\n};\n<script src="https://cdn.badgeboost.io/widget.js" defer><\/script>`;
+                        }
+                        if (fileName) fileName.innerText = `${plat}-config.js`;
+                        if (stepTwo) stepTwo.innerHTML = `avant la balise <code class="rounded bg-slate-800 px-1.5 py-0.5 font-mono text-[12px] text-slate-300">&lt;/body&gt;</code> de votre module ${plat}.`;
+                    });
+                });
             }
         }
     });
